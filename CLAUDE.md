@@ -65,7 +65,9 @@ No additional backend projects or architecture frameworks unless agreed.
 - Validation uses FluentValidation: one `AbstractValidator<T>` per request type (`ComponentRequestValidator`,
   `CreateComponentsRequestValidator` for the bulk list), built from the shared rule extensions in
   `Common/Validation` (`EntityName`, `EntityDescription`, `UniqueNames`). Validators are registered in DI and
-  injected into endpoints as `IValidator<T>`; they never access the database. Checks that need the database
+  injected into endpoints as `IValidator<T>`; they never access the database. Query parameters that need
+  validation are bound into a request record with `[AsParameters]` (`SearchRequest`); enum-like values are
+  bound as text and checked by the validator, so an unknown value gets a field error instead of a binding error. Checks that need the database
   (unique names, existence) run afterwards through the repository.
 - Validation errors are returned with `TypedResults.ValidationProblem(result.ToProblemErrors())`, keyed in JSON
   casing: `name` for a single object, `components[1].quantity` for list items (`OverridePropertyName`).
@@ -108,7 +110,9 @@ No additional backend projects or architecture frameworks unless agreed.
 - All HTTP calls live in `src/api/`; components never call `fetch` directly. API paths start with
   `/api` so the Vite dev proxy and the production host both work.
 - Keep the UI minimal: plain forms and tables, no extra widgets or styling beyond what a task needs.
-- Pages are routed with React Router (`/components`, later `/boards`, `/orders`); the header uses `NavLink`.
+- Pages are routed with React Router (`/components`, `/boards`, `/orders`, `/search`); the header uses `NavLink`.
+- Filters live in the URL query (`/boards?name=led`, `/search?term=led&type=boards`) so search results can link
+  to a filtered list page. `useNameSearch` reads and writes `?name=`.
 - No UI library or global state manager until there is a concrete need.
 - Show server validation messages next to the field they belong to; never use `alert`/`confirm`, confirm
   destructive actions in the page.

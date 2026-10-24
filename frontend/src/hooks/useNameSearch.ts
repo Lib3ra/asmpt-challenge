@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router'
 import { errorMessage } from '../api/http'
 
 const searchDelayMs = 250
@@ -7,10 +8,12 @@ export type SearchState<T> = { kind: 'loading' } | { kind: 'ready'; items: T[] }
 
 /**
  * Loads a list filtered by name. Typing waits briefly before searching, and outdated requests are cancelled.
+ * The filter lives in the URL (`?name=`), so a global search result can open the list already filtered.
  * Call reload() after a change to fetch the list again.
  */
 export function useNameSearch<T>(search: (name: string, signal: AbortSignal) => Promise<T[]>) {
-  const [nameFilter, setNameFilter] = useState('')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const nameFilter = searchParams.get('name') ?? ''
   const [reloadToken, setReloadToken] = useState(0)
   const [state, setState] = useState<SearchState<T>>({ kind: 'loading' })
 
@@ -31,7 +34,7 @@ export function useNameSearch<T>(search: (name: string, signal: AbortSignal) => 
 
   return {
     nameFilter,
-    setNameFilter,
+    setNameFilter: (name: string) => setSearchParams(name ? { name } : {}, { replace: true }),
     state,
     items: state.kind === 'ready' ? state.items : [],
     reload: () => setReloadToken((token) => token + 1),

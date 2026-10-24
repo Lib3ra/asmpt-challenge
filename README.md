@@ -5,7 +5,7 @@ manufacturing environment. The task description is in [`ASMPT_Coding_Challenge_E
 decisions and the delivery plan are tracked in [`docs/project-handbook.html`](docs/project-handbook.html).
 Code style and working conventions are in [`CLAUDE.md`](CLAUDE.md).
 
-> Status: components, boards and orders are managed (PR 6). Global search and the production download follow.
+> Status: components, boards and orders are managed and searchable across types (PR 8). The production download follows.
 
 ## Tech stack
 
