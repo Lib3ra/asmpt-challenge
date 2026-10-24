@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { searchBoards, type Board } from '../../api/boards'
 import { errorMessage } from '../../api/http'
-import { deleteOrders, searchOrders, type Order } from '../../api/orders'
+import { deleteOrders, productionDownloadUrl, searchOrders, type Order } from '../../api/orders'
 import { useNameSearch } from '../../hooks/useNameSearch'
 import { useSelection } from '../../hooks/useSelection'
 import { DeleteSelection } from '../../ui/DeleteSelection'
@@ -125,6 +125,9 @@ export function OrdersPage() {
                       <button type="button" className="link-button" onClick={() => setEditing(order)}>
                         Edit
                       </button>
+                      <a href={productionDownloadUrl(order.id)} download>
+                        Download for production
+                      </a>
                     </td>
                   </tr>
                 ))}

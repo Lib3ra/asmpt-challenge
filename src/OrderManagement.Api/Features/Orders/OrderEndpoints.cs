@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -33,6 +34,11 @@ public static class OrderEndpoints
             .WithSummary("Delete one or more orders")
             .WithDescription("Pass the ids as '?ids=1&ids=2'. All-or-nothing: if any id is unknown (404), nothing is deleted. "
                 + "The links to boards are removed; the boards remain.");
+        group.MapGet("/{id:int}/production-download", DownloadForProductionAsync)
+            .WithSummary("Download an order for production")
+            .WithDescription("Simulates handing an order to a production line: returns the order with its boards and their "
+                + "components (including Quantity per board) as a JSON file named 'order-<id>-<name>.json', plus the UTC "
+                + "time of the export. A pure export: the order is not changed and stays editable.");
         return app;
     }
 
@@ -126,6 +132,33 @@ public static class OrderEndpoints
 
         await orderRepository.DeleteOrdersAsync(distinctIds, cancellationToken);
         return TypedResults.NoContent();
+    }
+
+    /// <summary>
+    /// Returns the order as a typed JSON result, so OpenAPI documents the file format; the Content-Disposition
+    /// header makes browsers save it as a file.
+    /// </summary>
+    private static async Task<Results<Ok<ProductionFile>, NotFound>> DownloadForProductionAsync(
+        int id,
+        IOrderRepository orderRepository,
+        ILoggerFactory loggerFactory,
+        HttpContext httpContext,
+        CancellationToken cancellationToken)
+    {
+        Order? order = await orderRepository.GetOrderForProductionAsync(id, cancellationToken);
+        if (order is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        ProductionFile productionFile = ProductionFile.From(order, DateTimeOffset.UtcNow);
+        string fileName = ProductionFileName.For(order.Id, order.Name);
+        httpContext.Response.Headers.ContentDisposition = new ContentDisposition { FileName = fileName }.ToString();
+
+        loggerFactory.CreateLogger(typeof(OrderEndpoints)).LogInformation(
+            "Order {OrderId} ({OrderName}) downloaded for production as {FileName} with {BoardCount} board(s)",
+            order.Id, order.Name, fileName, order.Boards.Count);
+        return TypedResults.Ok(productionFile);
     }
 
     private static async Task<Dictionary<string, string[]>> CheckAgainstDatabaseAsync(
