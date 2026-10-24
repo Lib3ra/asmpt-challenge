@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace OrderManagement.Api.Features.Components;
 
-// Minimal persistence flow for PR 2. Full CRUD, search and validation follow in PR 3.
+// Minimal persistence flow for PR 2. Full CRUD, search and validation follow in PR 4.
 public static class ComponentEndpoints
 {
     public const string Route = "/api/components";
