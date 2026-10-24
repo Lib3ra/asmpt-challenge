@@ -54,6 +54,16 @@ public sealed class ComponentEndpointTests
     }
 
     [Test]
+    public async Task GetById_WhenComponentDoesNotExist_ReturnsNotFound()
+    {
+        // Act
+        HttpResponseMessage response = await _client.GetAsync($"{Route}/999");
+
+        // Assert
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+    }
+
+    [Test]
     public async Task Create_WithSeveralValidComponents_StoresAllAndReturnsCreated()
     {
         // Arrange
