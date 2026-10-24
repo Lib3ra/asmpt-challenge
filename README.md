@@ -2,7 +2,8 @@
 
 Web application for managing orders, boards and components in an SMT (Surface-Mount Technology)
 manufacturing environment. The task description is in [`ASMPT_Coding_Challenge_EN.pdf`](ASMPT_Coding_Challenge_EN.pdf);
-decisions, conventions and the delivery plan are tracked in [`docs/project-handbook.html`](docs/project-handbook.html).
+decisions and the delivery plan are tracked in [`docs/project-handbook.html`](docs/project-handbook.html).
+Code style and working conventions are in [`CLAUDE.md`](CLAUDE.md).
 
 > Status: project scaffold (PR 1). Domain features follow in later pull requests.
 

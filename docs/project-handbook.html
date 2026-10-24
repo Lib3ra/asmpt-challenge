@@ -195,7 +195,7 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
     <div class="ref">T-02</div>
     <div class="body">
       <h2>Code-Konventionen</h2>
-      <p class="lede">Vorschläge, die mit PR 1 im Repository verankert werden. Änderungen bitte im Review ansprechen.</p>
+      <p class="lede">Verbindliche Fassung im Repository: <code>CLAUDE.md</code>. Diese Übersicht fasst sie zusammen; Änderungen laufen über einen PR an <code>CLAUDE.md</code>.</p>
       <div class="group">
         <h3>Backend</h3>
         <ul class="items">
@@ -205,7 +205,7 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
           <li><span class="tag t-opt">Vorschlag</span><span>Entitäten nie direkt über die API ausgeben, sondern über Request- und Response-DTOs als <code>record</code>.</span></li>
           <li><span class="tag t-opt">Vorschlag</span><span>Strukturiertes Logging mit Platzhaltern (<code>"Created component {ComponentId}"</code>), keine String-Interpolation.</span></li>
           <li><span class="tag t-opt">Vorschlag</span><span><code>dotnet format --verify-no-changes</code> muss lokal sauber durchlaufen; Aufnahme in CI bei Bedarf.</span></li>
-          <li><span class="tag t-opt">Vorschlag</span><span>Testnamen im Stil <code>Methode_Situation_Erwartung</code>; Arrange/Act/Assert; NUnit-Constraint-Modell (<code>Assert.That</code>), mehrere Prüfungen in <code>Assert.EnterMultipleScope()</code>.</span></li>
+          <li><span class="tag t-opt">Vorschlag</span><span>Testnamen im Stil <code>Methode_Situation_Erwartung</code>; Kommentare <code>// Arrange</code>, <code>// Act</code>, <code>// Assert</code> in jedem Test; NUnit-Constraint-Modell (<code>Assert.That</code>), mehrere Prüfungen in <code>Assert.EnterMultipleScope()</code>.</span></li>
         </ul>
       </div>
       <div class="group">
