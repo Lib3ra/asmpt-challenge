@@ -10,6 +10,8 @@ type BoardFormProps = {
   /** The board being edited, or null to create a new one. */
   board: Board | null
   components: Component[]
+  /** Why the component list could not be loaded, shown instead of a misleading empty list. */
+  componentsError: string | null
   onSaved: (board: Board) => void
   onCancel: () => void
 }
@@ -46,7 +48,7 @@ function toInput(draft: BoardDraft): BoardInput {
 }
 
 /** Creates or edits one board. The parent remounts it (key) when switching between boards. */
-export function BoardForm({ board, components, onSaved, onCancel }: BoardFormProps) {
+export function BoardForm({ board, components, componentsError, onSaved, onCancel }: BoardFormProps) {
   const [draft, setDraft] = useState<BoardDraft>(() => draftFrom(board))
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [formError, setFormError] = useState<string | null>(null)
@@ -134,6 +136,7 @@ export function BoardForm({ board, components, onSaved, onCancel }: BoardFormPro
         onChange={(componentIds) => setDraft({ ...draft, componentIds })}
       />
       <FieldError messages={fieldErrors.componentIds} />
+      {componentsError && <p className="form-error">Could not load components: {componentsError}</p>}
       {formError && <p className="form-error">{formError}</p>}
       <div className="actions">
         {board && (
