@@ -1,4 +1,4 @@
-<title>Order Manager Handbuch</title>
+<title>Order Manager Handbook</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -90,27 +90,27 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">ASMPT Coding Challenge · Projekt-Handbuch</span>
-    <h1>Order Manager Handbuch</h1>
-    <p class="lede">Abgleich mit der Aufgabenstellung, festgelegte technische Entscheidungen, Code-Konventionen und der PR-Plan. Dieses Dokument wird mit jedem PR fortgeschrieben.</p>
-    <div class="meta"><span>Repo: Lib3ra/asmpt-challenge</span><span>Stand: 24.10.2026</span><span>Aktueller Schritt: PR 1</span></div>
+    <span class="eyebrow">ASMPT Coding Challenge · Project handbook</span>
+    <h1>Order Manager Handbook</h1>
+    <p class="lede">Alignment with the task description, agreed technical decisions, code conventions and the PR plan. This document is updated with every PR.</p>
+    <div class="meta"><span>Repo: Lib3ra/asmpt-challenge</span><span>As of: 2026-10-24</span><span>Current step: PR 1</span></div>
   </header>
 
   <section>
     <div class="ref">A-01</div>
     <div class="body">
-      <h2>Pflichtanforderungen der Challenge</h2>
+      <h2>Mandatory requirements</h2>
       <ul class="items">
-        <li><span class="tag t-ok">Pflicht</span><span>Plattformunabhängige C#-Anwendung zur Verwaltung von Orders in einer SMT-Fertigung.</span></li>
-        <li><span class="tag t-ok">Pflicht</span><span>CRUD für <b>Orders</b>, <b>Boards</b> und <b>Components</b>.</span></li>
-        <li><span class="tag t-ok">Pflicht</span><span>Many-to-many: Order ↔ Board („one or more“ Boards pro Order, Board in „one or multiple“ Orders) und Board ↔ Component („one or more“ Components pro Board, Component auf „one or more“ Boards).</span></li>
-        <li><span class="tag t-ok">Pflicht</span><span>Attribute: Order (Name, Description, Order Date), Board (Name, Description, Length, Width), Component (Name, Description, Quantity). IDs, Fremdschlüssel und Referenzlisten dürfen ergänzt werden.</span></li>
-        <li><span class="tag t-ok">Pflicht</span><span>Erstellen, Bearbeiten, Suchen und Entfernen von <b>einem oder mehreren</b> Components, Boards und Orders.</span></li>
-        <li><span class="tag t-ok">Pflicht</span><span>Download eines Orders, der die Übergabe an eine Produktionslinie simuliert.</span></li>
-        <li><span class="tag t-ok">Pflicht</span><span>Serialisierung nach JSON; Persistenz mit frei wählbarer Technologie.</span></li>
-        <li><span class="tag t-ok">Pflicht</span><span>Logging relevanter Aktionen und Fehler mit einem verbreiteten Framework.</span></li>
-        <li><span class="tag t-ok">Pflicht</span><span>OOP-Prinzipien (SOLID, DRY), Standard-Entwurfsmuster, Unit-Test für mindestens eine repräsentative Methode.</span></li>
-        <li><span class="tag t-ok">Empfohlen</span><span>Übersicht der modellierten Klassen und der Architektur für die Präsentation im Team („would be beneficial“).</span></li>
+        <li><span class="tag t-ok">Mandatory</span><span>Platform-independent C# application for managing orders in an SMT manufacturing environment.</span></li>
+        <li><span class="tag t-ok">Mandatory</span><span>CRUD for <b>Orders</b>, <b>Boards</b> and <b>Components</b>.</span></li>
+        <li><span class="tag t-ok">Mandatory</span><span>Many-to-many: Order ↔ Board (“one or more” boards per order, a board in “one or multiple” orders) and Board ↔ Component (“one or more” components per board, a component on “one or more” boards).</span></li>
+        <li><span class="tag t-ok">Mandatory</span><span>Attributes: Order (Name, Description, Order Date), Board (Name, Description, Length, Width), Component (Name, Description, Quantity). IDs, foreign keys and reference lists may be added.</span></li>
+        <li><span class="tag t-ok">Mandatory</span><span>Create, edit, search and remove <b>one or more</b> components, boards and orders.</span></li>
+        <li><span class="tag t-ok">Mandatory</span><span>Download an order, simulating the hand-over to a production line.</span></li>
+        <li><span class="tag t-ok">Mandatory</span><span>Serialize data to JSON; persist it with a technology of our choice.</span></li>
+        <li><span class="tag t-ok">Mandatory</span><span>Log relevant actions and errors with a commonly adopted framework.</span></li>
+        <li><span class="tag t-ok">Mandatory</span><span>OOP principles (SOLID, DRY), standard design patterns, a unit test for at least one representative method.</span></li>
+        <li><span class="tag t-ok">Recommended</span><span>Outline of the modelled classes and the architecture for the team presentation (“would be beneficial”).</span></li>
       </ul>
     </div>
   </section>
@@ -118,13 +118,13 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
   <section>
     <div class="ref">A-02</div>
     <div class="body">
-      <h2>Optionale Anforderungen, die wir umsetzen</h2>
+      <h2>Optional requirements we implement</h2>
       <ul class="items">
-        <li><span class="tag t-opt">Optional</span><span><b>Version Control</b>: GitHub, kleine Branches, reviewbare PRs. Repository zum Abschluss für Reviewer freigeben.</span></li>
-        <li><span class="tag t-opt">Optional</span><span><b>CI</b>: GitHub Actions baut und testet automatisch und erstellt auf <code>main</code> ein Docker-Image-Artefakt mit Commit-SHA als Tag.</span></li>
-        <li><span class="tag t-opt">Optional</span><span><b>Web Interface</b>: React-UI über eine ASP.NET Core Web API mit CRUD für alle drei Entitäten.</span></li>
-        <li><span class="tag t-opt">Optional</span><span><b>Persistenz über Neustarts</b>: SQLite mit EF Core, Docker Named Volume auf <code>/data</code>.</span></li>
-        <li><span class="tag t-opt">Optional</span><span><b>Containerisierung</b>: mehrstufiges Dockerfile, Docker Compose. API, Datenbank (SQLite-Datei) und Frontend in einem Container.</span></li>
+        <li><span class="tag t-opt">Optional</span><span><b>Version control</b>: GitHub, small branches, reviewable PRs. Repository made accessible to reviewers at the end.</span></li>
+        <li><span class="tag t-opt">Optional</span><span><b>CI</b>: GitHub Actions builds and tests automatically and, on <code>main</code>, produces a Docker image artifact tagged with the commit SHA.</span></li>
+        <li><span class="tag t-opt">Optional</span><span><b>Web interface</b>: React UI on top of an ASP.NET Core Web API with CRUD for all three entities.</span></li>
+        <li><span class="tag t-opt">Optional</span><span><b>Persistence between restarts</b>: SQLite via EF Core, Docker named volume mounted at <code>/data</code>.</span></li>
+        <li><span class="tag t-opt">Optional</span><span><b>Containerization</b>: multi-stage Dockerfile and Docker Compose. API, database (SQLite file) and frontend in one container.</span></li>
       </ul>
     </div>
   </section>
@@ -132,12 +132,12 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
   <section>
     <div class="ref">A-03</div>
     <div class="body">
-      <h2>Bewusste Abweichungen</h2>
+      <h2>Deliberate deviations</h2>
       <ul class="items">
-        <li><span class="tag t-dev">Ausgelassen</span><span><b>Cloud-Deployment</b> (Teil der optionalen CI/CD-Anforderung): kein Azure, kein Neon, kein Registry-Push. Die Pipeline endet beim herunterladbaren Image-Artefakt.</span></li>
-        <li><span class="tag t-dev">Ausgelassen</span><span><b>Login und Authentifizierung</b> (Teil der optionalen Web-Interface-Anforderung, „accessible via login“). Die UI ist ohne Anmeldung erreichbar.</span></li>
-        <li><span class="tag t-dev">Eingeschränkt</span><span><b>„Runnable locally and in the cloud“</b>: Das Image ist cloud-tauglich gebaut (non-root, Konfiguration über Umgebungsvariablen), wird aber nur lokal betrieben und geprüft.</span></li>
-        <li><span class="tag t-dev">Eingeschränkt</span><span><b>„Build on each commit“</b>: CI läuft bei Pull Requests und Pushes auf <code>main</code>. Commits auf Feature-Branches werden über den offenen PR gebaut.</span></li>
+        <li><span class="tag t-dev">Omitted</span><span><b>Cloud deployment</b> (part of the optional CI/CD requirement): no Azure, no Neon, no registry push. The pipeline ends with a downloadable image artifact.</span></li>
+        <li><span class="tag t-dev">Omitted</span><span><b>Login and authentication</b> (part of the optional web interface requirement, “accessible via login”). The UI is reachable without signing in.</span></li>
+        <li><span class="tag t-dev">Limited</span><span><b>“Runnable locally and in the cloud”</b>: the image is built to be cloud-ready (non-root, configuration via environment variables) but is only run and verified locally.</span></li>
+        <li><span class="tag t-dev">Limited</span><span><b>“Build on each commit”</b>: CI runs on pull requests and pushes to <code>main</code>. Commits on feature branches are built through their open PR.</span></li>
       </ul>
     </div>
   </section>
@@ -145,23 +145,23 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
   <section>
     <div class="ref">A-04</div>
     <div class="body">
-      <h2>Offene fachliche Fragen</h2>
-      <p class="lede">Werden beim jeweiligen Feature gemeinsam entschieden und hier mit Datum nachgetragen.</p>
+      <h2>Open domain questions</h2>
+      <p class="lede">Decided together when the feature is built, then recorded with a date in the decision log.</p>
       <ul class="items">
-        <li><span class="tag t-open">PR 4 / 5</span><span><b>Mindestkardinalität</b>: Die Challenge schreibt „one or more“. Muss ein Order beim Speichern mindestens ein Board haben, ein Board mindestens einen Component? Oder sind leere Zuordnungen zulässig, etwa als Entwurf?</span></li>
-        <li><span class="tag t-open">PR 4 / 5</span><span><b>Löschverhalten</b> bei bestehenden Zuordnungen: Sperre, Kaskade oder Entfernen nur der Verknüpfung.</span></li>
-        <li><span class="tag t-open">PR 3–5</span><span><b>„One or more“ bei Aktionen</b>: Sammeloperationen für Erstellen, Bearbeiten, Suchen und Entfernen. Umfang, API-Form und Verhalten bei Teilfehlern sind offen.</span></li>
-        <li><span class="tag t-open">PR 3</span><span><b>Suche</b>: Welche Felder werden durchsucht (Name, Description), mit welcher Logik (enthält, Groß-/Kleinschreibung)?</span></li>
-        <li><span class="tag t-open">PR 3</span><span><b>Validierung</b>: Pflichtfelder, Längen, Wertebereich von Quantity (zum Beispiel 0 oder ganzzahlig größer 0).</span></li>
-        <li><span class="tag t-open">PR 4</span><span><b>Einheit von Length und Width</b> (in der SMT-Praxis üblich: Millimeter) und Datentyp (ganzzahlig oder Dezimal).</span></li>
-        <li><span class="tag t-open">PR 5</span><span><b>Order Date</b>: reines Datum oder Zeitpunkt; Vorgabe beim Anlegen.</span></li>
-        <li><span class="tag t-open">PR 6</span><span><b>JSON-Struktur des Produktionsdownloads</b> und Dateiname.</span></li>
+        <li><span class="tag t-open">PR 4 / 5</span><span><b>Minimum cardinality</b>: the challenge says “one or more”. Must an order have at least one board when saved, a board at least one component? Or are empty assignments allowed, for example as drafts?</span></li>
+        <li><span class="tag t-open">PR 4 / 5</span><span><b>Delete behavior</b> with existing links: block, cascade, or remove only the link.</span></li>
+        <li><span class="tag t-open">PR 3–5</span><span><b>“One or more” for actions</b>: bulk create, edit, search and remove. Scope, API shape and behavior on partial failure are open.</span></li>
+        <li><span class="tag t-open">PR 3</span><span><b>Search</b>: which fields (Name, Description) and which matching (contains, case sensitivity)?</span></li>
+        <li><span class="tag t-open">PR 3</span><span><b>Validation</b>: required fields, lengths, allowed range of Quantity (for example 0, or integers greater than 0).</span></li>
+        <li><span class="tag t-open">PR 4</span><span><b>Unit of Length and Width</b> (millimetres are common in SMT) and data type (integer or decimal).</span></li>
+        <li><span class="tag t-open">PR 5</span><span><b>Order Date</b>: date only or timestamp; default when creating.</span></li>
+        <li><span class="tag t-open">PR 6</span><span><b>JSON structure of the production download</b> and file name.</span></li>
       </ul>
       <div class="note">
-        <h3>Hinweise zum Prompt im Vergleich zur Challenge</h3>
-        <p><b>Quantity</b>: Die Challenge legt Quantity an den Component, ohne die Bedeutung zu definieren. „Anzahl Exemplare pro Board“ ist unsere Interpretation. Wie gefordert bleibt Quantity am Component, auch wenn derselbe Component auf mehreren Boards liegt. Diese Interpretation sollten wir in der Präsentation ausdrücklich nennen.</p>
-        <p><b>„One or more“</b> betrifft alle vier Aktionen, nicht nur das Löschen. Der Prompt berücksichtigt das, legt den Umfang aber zu Recht noch nicht fest.</p>
-        <p>Darüber hinaus widerspricht der Prompt der Challenge nicht und übersieht keine Pflichtanforderung.</p>
+        <h3>Notes on our brief compared with the challenge</h3>
+        <p><b>Quantity</b>: the challenge puts Quantity on Component without defining its meaning. “Copies of this component per board” is our interpretation. As required, Quantity stays on Component even when the same component sits on several boards. We should state this interpretation explicitly in the presentation.</p>
+        <p><b>“One or more”</b> applies to all four actions, not only removal. Our brief acknowledges this and rightly leaves the scope open for now.</p>
+        <p>Otherwise our brief neither contradicts the challenge nor misses a mandatory requirement.</p>
       </div>
     </div>
   </section>
@@ -169,22 +169,22 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
   <section>
     <div class="ref">T-01</div>
     <div class="body">
-      <h2>Technische Entscheidungen</h2>
+      <h2>Technical decisions</h2>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Bereich</th><th>Entscheidung</th><th>Status</th></tr></thead>
+          <thead><tr><th>Area</th><th>Decision</th><th>Status</th></tr></thead>
           <tbody>
-            <tr><td>Backend</td><td>C#, ASP.NET Core Minimal API auf .NET 10 (LTS)</td><td><span class="tag t-ok">Festgelegt</span></td></tr>
-            <tr><td>Frontend</td><td>React, TypeScript, Vite; Vite-Proxy leitet <code>/api</code> im Dev-Betrieb an die API weiter</td><td><span class="tag t-ok">Festgelegt</span></td></tr>
-            <tr><td>Persistenz</td><td>SQLite über EF Core, Migrationen beim Start, Connection String über <code>ConnectionStrings__DefaultConnection</code></td><td><span class="tag t-ok">Festgelegt</span></td></tr>
-            <tr><td>Tests</td><td>Separates NUnit-Projekt (NUnit 4.6) ab PR 1, Integrationstests über <code>WebApplicationFactory</code>; Persistenztests auf isolierten SQLite-Datenbanken</td><td><span class="tag t-ok">Festgelegt</span></td></tr>
-            <tr><td>Container</td><td>Ein Image für React und API, non-root, Volume auf <code>/data</code>, Datenbank <code>/data/app.db</code>, Tag = Commit-SHA</td><td><span class="tag t-ok">Festgelegt</span></td></tr>
-            <tr><td>CI</td><td>GitHub Actions: Build, Tests, Lint, Typecheck; auf <code>main</code> zusätzlich <code>docker save</code> als Artefakt</td><td><span class="tag t-ok">Festgelegt</span></td></tr>
-            <tr><td>Betrieb</td><td>Einzelinstanz, keine Authentifizierung, kein Cloud-Deployment</td><td><span class="tag t-ok">Festgelegt</span></td></tr>
-            <tr><td>Struktur</td><td><code>src/OrderManagement.Api</code>, <code>tests/OrderManagement.Api.Tests</code>, <code>frontend/</code>; Endpunkte nach Features gruppiert</td><td><span class="tag t-opt">Vorschlag</span></td></tr>
-            <tr><td>Logging</td><td><code>Microsoft.Extensions.Logging</code> (<code>ILogger&lt;T&gt;</code>) mit Konsolen-Provider; im Container über <code>docker logs</code> einsehbar</td><td><span class="tag t-opt">Vorschlag</span></td></tr>
-            <tr><td>Health</td><td>ASP.NET Core Health Checks unter <code>/api/health</code> mit JSON-Antwort; ab PR 2 inklusive Datenbank-Check</td><td><span class="tag t-opt">Vorschlag</span></td></tr>
-            <tr><td>Node</td><td>Node 24 LTS in CI und Docker-Build; Lockfile <code>package-lock.json</code> eingecheckt</td><td><span class="tag t-opt">Vorschlag</span></td></tr>
+            <tr><td>Backend</td><td>C#, ASP.NET Core Minimal API on .NET 10 (LTS)</td><td><span class="tag t-ok">Decided</span></td></tr>
+            <tr><td>Frontend</td><td>React, TypeScript, Vite; in development the Vite proxy forwards <code>/api</code> to the API</td><td><span class="tag t-ok">Decided</span></td></tr>
+            <tr><td>Persistence</td><td>SQLite via EF Core, migrations applied at startup, connection string via <code>ConnectionStrings__DefaultConnection</code></td><td><span class="tag t-ok">Decided</span></td></tr>
+            <tr><td>Tests</td><td>Separate NUnit project (NUnit 4.6) from PR 1, integration tests via <code>WebApplicationFactory</code>; persistence tests on isolated SQLite databases</td><td><span class="tag t-ok">Decided</span></td></tr>
+            <tr><td>Container</td><td>One image for React and API, non-root, volume at <code>/data</code>, database <code>/data/app.db</code>, tag = commit SHA</td><td><span class="tag t-ok">Decided</span></td></tr>
+            <tr><td>CI</td><td>GitHub Actions: build, tests, lint, typecheck; on <code>main</code> additionally <code>docker save</code> as an artifact</td><td><span class="tag t-ok">Decided</span></td></tr>
+            <tr><td>Operation</td><td>Single instance, no authentication, no cloud deployment</td><td><span class="tag t-ok">Decided</span></td></tr>
+            <tr><td>Structure</td><td><code>src/OrderManagement.Api</code>, <code>tests/OrderManagement.Api.Tests</code>, <code>frontend/</code>; endpoints grouped by feature</td><td><span class="tag t-opt">Proposed</span></td></tr>
+            <tr><td>Logging</td><td><code>Microsoft.Extensions.Logging</code> (<code>ILogger&lt;T&gt;</code>) with the console provider; visible in the container via <code>docker logs</code></td><td><span class="tag t-opt">Proposed</span></td></tr>
+            <tr><td>Health</td><td>ASP.NET Core health checks at <code>/api/health</code> with a JSON response; database check added in PR 2</td><td><span class="tag t-opt">Proposed</span></td></tr>
+            <tr><td>Node</td><td>Node 24 LTS in CI and the Docker build; <code>package-lock.json</code> committed</td><td><span class="tag t-opt">Proposed</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -194,34 +194,34 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
   <section>
     <div class="ref">T-02</div>
     <div class="body">
-      <h2>Code-Konventionen</h2>
-      <p class="lede">Verbindliche Fassung im Repository: <code>CLAUDE.md</code>. Diese Übersicht fasst sie zusammen; Änderungen laufen über einen PR an <code>CLAUDE.md</code>.</p>
+      <h2>Code conventions</h2>
+      <p class="lede">The binding version lives in the repository: <code>CLAUDE.md</code>. This overview summarizes it; changes go through a PR to <code>CLAUDE.md</code>.</p>
       <div class="group">
         <h3>Backend</h3>
         <ul class="items">
-          <li><span class="tag t-opt">Vorschlag</span><span>Gemeinsame Einstellungen in <code>Directory.Build.props</code>: Nullable aktiviert, Warnungen als Fehler, Implicit Usings.</span></li>
-          <li><span class="tag t-opt">Vorschlag</span><span><code>.editorconfig</code> als einzige Stilquelle: 4 Leerzeichen in C#, 2 in TS/JSON/YAML, file-scoped Namespaces, LF.</span></li>
-          <li><span class="tag t-opt">Vorschlag</span><span>Ein Feature pro Ordner (<code>Features/Components</code> mit Endpunkten, DTOs und Service). Endpunkte per Extension-Methode <code>MapComponentEndpoints()</code> registrieren.</span></li>
-          <li><span class="tag t-opt">Vorschlag</span><span>Entitäten nie direkt über die API ausgeben, sondern über Request- und Response-DTOs als <code>record</code>.</span></li>
-          <li><span class="tag t-opt">Vorschlag</span><span>Strukturiertes Logging mit Platzhaltern (<code>"Created component {ComponentId}"</code>), keine String-Interpolation.</span></li>
-          <li><span class="tag t-opt">Vorschlag</span><span><code>dotnet format --verify-no-changes</code> muss lokal sauber durchlaufen; Aufnahme in CI bei Bedarf.</span></li>
-          <li><span class="tag t-opt">Vorschlag</span><span>Testnamen im Stil <code>Methode_Situation_Erwartung</code>; Kommentare <code>// Arrange</code>, <code>// Act</code>, <code>// Assert</code> in jedem Test; NUnit-Constraint-Modell (<code>Assert.That</code>), mehrere Prüfungen in <code>Assert.EnterMultipleScope()</code>.</span></li>
+          <li><span class="tag t-opt">Proposed</span><span>Shared settings in <code>Directory.Build.props</code>: nullable enabled, warnings as errors, implicit usings.</span></li>
+          <li><span class="tag t-opt">Proposed</span><span><code>.editorconfig</code> as the single style source: 4 spaces in C#, 2 in TS/JSON/YAML, file-scoped namespaces, LF.</span></li>
+          <li><span class="tag t-opt">Proposed</span><span>One folder per feature (<code>Features/Components</code> with endpoints, DTOs and service). Endpoints registered via an extension method such as <code>MapComponentEndpoints()</code>.</span></li>
+          <li><span class="tag t-opt">Proposed</span><span>Entities are never exposed by the API; request and response DTOs are declared as <code>record</code>.</span></li>
+          <li><span class="tag t-opt">Proposed</span><span>Structured logging with message templates (<code>"Created component {ComponentId}"</code>), no string interpolation.</span></li>
+          <li><span class="tag t-opt">Proposed</span><span><code>dotnet format --verify-no-changes</code> must pass locally; added to CI if needed.</span></li>
+          <li><span class="tag t-opt">Proposed</span><span>Test names <code>Method_Situation_ExpectedResult</code>; <code>// Arrange</code>, <code>// Act</code>, <code>// Assert</code> comments in every test; NUnit constraint model (<code>Assert.That</code>), related checks grouped in <code>Assert.EnterMultipleScope()</code>.</span></li>
         </ul>
       </div>
       <div class="group">
         <h3>Frontend</h3>
         <ul class="items">
-          <li><span class="tag t-opt">Vorschlag</span><span>Linting mit ESLint (Flat Config in <code>eslint.config.js</code>): JS- und typescript-eslint-Empfehlungen sowie die React-Hooks- und React-Refresh-Regeln. <code>npm run lint</code>, <code>npm run typecheck</code> und <code>npm run build</code> müssen in CI grün sein.</span></li>
-          <li><span class="tag t-opt">Vorschlag</span><span>API-Zugriffe gebündelt in <code>src/api/</code>; Komponenten rufen <code>fetch</code> nicht direkt auf.</span></li>
-          <li><span class="tag t-opt">Vorschlag</span><span>Zunächst keine UI-Bibliothek und kein globaler State-Manager; erst bei konkretem Bedarf einführen.</span></li>
+          <li><span class="tag t-opt">Proposed</span><span>Linting with ESLint (flat config in <code>eslint.config.js</code>): JS and typescript-eslint recommendations plus the React Hooks and React Refresh rules. <code>npm run lint</code>, <code>npm run typecheck</code> and <code>npm run build</code> must pass in CI.</span></li>
+          <li><span class="tag t-opt">Proposed</span><span>All API calls live in <code>src/api/</code>; components never call <code>fetch</code> directly.</span></li>
+          <li><span class="tag t-opt">Proposed</span><span>No UI library and no global state manager until there is a concrete need.</span></li>
         </ul>
       </div>
       <div class="group">
-        <h3>Git</h3>
+        <h3>Git and language</h3>
         <ul class="items">
-          <li><span class="tag t-ok">Festgelegt</span><span>Kein direkter Commit auf <code>main</code>; ein Branch pro PR; PRs werden nur von dir gemergt.</span></li>
-          <li><span class="tag t-opt">Vorschlag</span><span>Code, Kommentare, Commits und README auf Englisch; Projekt-Handbuch und Abstimmung auf Deutsch.</span></li>
-          <li><span class="tag t-opt">Vorschlag</span><span>Branch-Namen <code>feat/…</code>, <code>chore/…</code>, <code>docs/…</code>; Commit-Nachrichten im Imperativ, englisch, im Conventional-Commits-Stil.</span></li>
+          <li><span class="tag t-ok">Decided</span><span>No direct commits to <code>main</code>; one branch per PR; PRs are merged by the project owner only.</span></li>
+          <li><span class="tag t-ok">Decided</span><span>Everything in English: code, comments, commits, README, <code>CLAUDE.md</code>, this handbook and project discussions.</span></li>
+          <li><span class="tag t-opt">Proposed</span><span>Branch names <code>feat/…</code>, <code>chore/…</code>, <code>docs/…</code>, <code>fix/…</code>; commit messages in imperative mood with a short subject line.</span></li>
         </ul>
       </div>
     </div>
@@ -230,15 +230,15 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
   <section>
     <div class="ref">P-01</div>
     <div class="body">
-      <h2>PR-Plan</h2>
+      <h2>PR plan</h2>
       <ol class="prs">
-        <li class="active"><div class="pr-head"><span class="pr-num">PR 1</span><h3>Grundgerüst und erste CI</h3><span class="tag t-open">In Arbeit</span></div><p class="pr-text">Minimal API mit Health-Endpoint, NUnit-Projekt mit Integrationstest, React-Seite zeigt den API-Status, .gitignore, .dockerignore, README, CI für Backend und Frontend.</p></li>
-        <li><div class="pr-head"><span class="pr-num">PR 2</span><h3>Docker, SQLite und Artefakt</h3></div><p class="pr-text">Mehrstufiges Dockerfile, non-root, Compose mit Volume, EF Core mit erster Migration, minimaler Component-Persistenzablauf, Image-Artefakt auf main.</p></li>
-        <li><div class="pr-head"><span class="pr-num">PR 3</span><h3>Components</h3></div><p class="pr-text">CRUD und Suche in API und UI, Quantity am Component, Validierungsregeln gemeinsam festlegen.</p></li>
-        <li><div class="pr-head"><span class="pr-num">PR 4</span><h3>Boards</h3></div><p class="pr-text">CRUD, Suche, Component-Zuordnungen, Löschverhalten entscheiden.</p></li>
-        <li><div class="pr-head"><span class="pr-num">PR 5</span><h3>Orders</h3></div><p class="pr-text">CRUD, Suche, Board-Zuordnungen, Sammeloperationen vervollständigen.</p></li>
-        <li><div class="pr-head"><span class="pr-num">PR 6</span><h3>Produktionsdownload</h3></div><p class="pr-text">JSON-Download eines Orders mit Boards und Components, Download-Button in der UI, Logging und Tests.</p></li>
-        <li><div class="pr-head"><span class="pr-num">PR 7</span><h3>Abschluss</h3></div><p class="pr-text">Erneuter Abgleich, End-to-End-Prüfung, Start aus frischem Checkout und CI-Artefakt, Klassen- und Architekturübersicht.</p></li>
+        <li class="active"><div class="pr-head"><span class="pr-num">PR 1</span><h3>Scaffold and first CI</h3><span class="tag t-open">In review</span></div><p class="pr-text">Minimal API with health endpoint, NUnit project with an integration test, React page showing the API status, .gitignore, .dockerignore, README, CLAUDE.md, CI for backend and frontend.</p></li>
+        <li><div class="pr-head"><span class="pr-num">PR 2</span><h3>Docker, SQLite and artifact</h3></div><p class="pr-text">Multi-stage Dockerfile, non-root, Compose with volume, EF Core with first migration, minimal component persistence flow, image artifact on main.</p></li>
+        <li><div class="pr-head"><span class="pr-num">PR 3</span><h3>Components</h3></div><p class="pr-text">CRUD and search in API and UI, Quantity on Component, validation rules decided together.</p></li>
+        <li><div class="pr-head"><span class="pr-num">PR 4</span><h3>Boards</h3></div><p class="pr-text">CRUD, search, component assignments, decide delete behavior.</p></li>
+        <li><div class="pr-head"><span class="pr-num">PR 5</span><h3>Orders</h3></div><p class="pr-text">CRUD, search, board assignments, complete the bulk operations.</p></li>
+        <li><div class="pr-head"><span class="pr-num">PR 6</span><h3>Production download</h3></div><p class="pr-text">JSON download of an order with its boards and components, download button in the UI, logging and tests.</p></li>
+        <li><div class="pr-head"><span class="pr-num">PR 7</span><h3>Wrap-up</h3></div><p class="pr-text">Final alignment check, end-to-end verification, start from a fresh checkout and from the CI artifact, class and architecture outline.</p></li>
       </ol>
     </div>
   </section>
@@ -246,23 +246,24 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
   <section>
     <div class="ref">D-01</div>
     <div class="body">
-      <h2>Entscheidungslog</h2>
-      <p class="lede">Fachliche Entscheidungen werden hier datiert festgehalten, sobald sie beim jeweiligen Feature getroffen sind.</p>
+      <h2>Decision log</h2>
+      <p class="lede">Decisions are recorded here with a date as soon as they are made for a feature.</p>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Datum</th><th>Entscheidung</th><th>PR</th></tr></thead>
+          <thead><tr><th>Date</th><th>Decision</th><th>PR</th></tr></thead>
           <tbody>
-            <tr><td>24.10.2026</td><td>Quantity bleibt am Component und bedeutet: Anzahl Exemplare dieses Components pro Board. Keine Quantity auf der Board-Component-Zuordnung, keine Lagerlogik, keine Berechnung aus Board-Maßen.</td><td>–</td></tr>
-            <tr><td>24.10.2026</td><td>Produktionsdownload als JSON-Datei mit Order, Boards und Components inklusive Quantity; reine Simulation ohne Maschinenanbindung.</td><td>–</td></tr>
-            <tr><td>24.10.2026</td><td>Cloud-Deployment und Login werden nicht umgesetzt.</td><td>–</td></tr>
-            <tr><td>24.10.2026</td><td>Testframework NUnit statt xUnit, weil das Team damit vertrauter ist. Version 4.6.1 statt des gerade erschienenen Major-Release 5.0.0.</td><td>#1</td></tr>
-            <tr><td>24.10.2026</td><td>Anwendungsname generisch „Order Manager“ statt „SMT Order Manager“.</td><td>#1</td></tr>
-            <tr><td>24.10.2026</td><td>Frontend-Linting mit ESLint statt oxlint aus dem Vite-Template, weil das Team ESLint kennt.</td><td>#1</td></tr>
+            <tr><td>2026-10-24</td><td>Quantity stays on Component and means the number of copies of this component per board. No quantity on the board–component link, no stock management, no calculation from board dimensions.</td><td>–</td></tr>
+            <tr><td>2026-10-24</td><td>Production download as a JSON file containing the order, its boards and components including Quantity; a pure simulation without machine integration.</td><td>–</td></tr>
+            <tr><td>2026-10-24</td><td>No cloud deployment and no login.</td><td>–</td></tr>
+            <tr><td>2026-10-24</td><td>NUnit instead of xUnit because the team knows it better. Version 4.6.1 rather than the freshly released 5.0.0 major.</td><td>#1</td></tr>
+            <tr><td>2026-10-24</td><td>Generic application name “Order Manager” instead of “SMT Order Manager”.</td><td>#1</td></tr>
+            <tr><td>2026-10-24</td><td>Frontend linting with ESLint instead of oxlint from the Vite template, because the team knows ESLint.</td><td>#1</td></tr>
+            <tr><td>2026-10-24</td><td>All documentation and project discussions in English.</td><td>#1</td></tr>
           </tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <footer>Quelle: ASMPT_Coding_Challenge_EN.pdf im Repository. Repo-Kopie dieses Dokuments: docs/project-handbook.html</footer>
+  <footer>Source: ASMPT_Coding_Challenge_EN.pdf in the repository. Repository copy of this document: docs/project-handbook.html</footer>
 </div>

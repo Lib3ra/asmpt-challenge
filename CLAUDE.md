@@ -72,8 +72,8 @@ No additional backend projects or architecture frameworks unless agreed.
 
 ## Language
 
-Code, comments, commit messages, README and this file in English. The project handbook and
-discussions with the project owner in German.
+Everything in English: code, comments, commit messages, PR descriptions, README, this file, the
+project handbook and discussions with the project owner.
 
 ## Commands
 
