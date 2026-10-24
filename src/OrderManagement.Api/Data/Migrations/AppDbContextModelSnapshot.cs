@@ -36,6 +36,43 @@ namespace OrderManagement.Api.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Components", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "0603 thick-film chip resistor, 1 %, 0.1 W",
+                            Name = "Resistor 10 kOhm",
+                            Quantity = 24
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "0402 MLCC, X7R, 16 V, decoupling",
+                            Name = "Ceramic capacitor 100 nF",
+                            Quantity = 32
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "0805 SMD LED, 2.1 V forward voltage",
+                            Name = "LED green",
+                            Quantity = 4
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "LQFP-48, ARM Cortex-M3, 72 MHz",
+                            Name = "Microcontroller STM32F103",
+                            Quantity = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "SOT-223 LDO, 3.3 V, 1 A",
+                            Name = "Voltage regulator AMS1117-3.3",
+                            Quantity = 2
+                        });
                 });
 #pragma warning restore 612, 618
         }

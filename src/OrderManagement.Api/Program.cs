@@ -2,12 +2,13 @@ using OrderManagement.Api.Data;
 using OrderManagement.Api.Features.Components;
 using OrderManagement.Api.Features.Health;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDatabase(builder.Configuration, builder.Environment);
+builder.Services.AddScoped<IComponentRepository, ComponentRepository>();
 builder.Services.AddHealthChecks().AddDbContextCheck<AppDbContext>();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 await app.ApplyMigrationsAsync();
 

@@ -25,7 +25,7 @@ public sealed class SqliteApiFactory : WebApplicationFactory<Program>
     {
         // Pooled connections keep the file open; release them before deleting.
         SqliteConnection.ClearAllPools();
-        var directory = Path.GetDirectoryName(databasePath);
+        string? directory = Path.GetDirectoryName(databasePath);
         if (directory is not null && Directory.Exists(directory))
         {
             Directory.Delete(directory, recursive: true);

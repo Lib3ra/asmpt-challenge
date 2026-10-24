@@ -10,7 +10,7 @@ public static class SqliteConnectionString
     /// </summary>
     public static string ResolveDataSource(string connectionString, string basePath)
     {
-        var builder = new SqliteConnectionStringBuilder(connectionString);
+        SqliteConnectionStringBuilder builder = new SqliteConnectionStringBuilder(connectionString);
         if (IsInMemory(builder) || Path.IsPathRooted(builder.DataSource))
         {
             return builder.ToString();
@@ -23,13 +23,13 @@ public static class SqliteConnectionString
     /// <summary>Creates the directory that will hold the database file. SQLite creates the file, not the directory.</summary>
     public static void EnsureDirectoryExists(string connectionString)
     {
-        var builder = new SqliteConnectionStringBuilder(connectionString);
+        SqliteConnectionStringBuilder builder = new SqliteConnectionStringBuilder(connectionString);
         if (IsInMemory(builder))
         {
             return;
         }
 
-        var directory = Path.GetDirectoryName(Path.GetFullPath(builder.DataSource));
+        string? directory = Path.GetDirectoryName(Path.GetFullPath(builder.DataSource));
         if (!string.IsNullOrEmpty(directory))
         {
             Directory.CreateDirectory(directory);

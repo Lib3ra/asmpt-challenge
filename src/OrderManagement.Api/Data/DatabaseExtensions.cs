@@ -11,7 +11,7 @@ public static class DatabaseExtensions
     {
         services.AddDbContext<AppDbContext>(options =>
         {
-            var configured = configuration.GetConnectionString(ConnectionStringName)
+            string configured = configuration.GetConnectionString(ConnectionStringName)
                 ?? throw new InvalidOperationException($"Connection string '{ConnectionStringName}' is not configured.");
             options.UseSqlite(SqliteConnectionString.ResolveDataSource(configured, environment.ContentRootPath));
         });
@@ -21,15 +21,15 @@ public static class DatabaseExtensions
     /// <summary>Applies pending EF Core migrations. Runs once at startup; the app is operated as a single instance.</summary>
     public static async Task ApplyMigrationsAsync(this WebApplication app)
     {
-        await using var scope = app.Services.CreateAsyncScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<AppDbContext>>();
+        await using AsyncServiceScope scope = app.Services.CreateAsyncScope();
+        AppDbContext db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        ILogger<AppDbContext> logger = scope.ServiceProvider.GetRequiredService<ILogger<AppDbContext>>();
 
-        var connectionString = db.Database.GetConnectionString()!;
+        string connectionString = db.Database.GetConnectionString()!;
         SqliteConnectionString.EnsureDirectoryExists(connectionString);
 
-        var dataSource = new SqliteConnectionStringBuilder(connectionString).DataSource;
-        var pending = (await db.Database.GetPendingMigrationsAsync()).ToList();
+        string dataSource = new SqliteConnectionStringBuilder(connectionString).DataSource;
+        List<string> pending = (await db.Database.GetPendingMigrationsAsync()).ToList();
         if (pending.Count == 0)
         {
             logger.LogInformation("Database {DataSource} is up to date", dataSource);

@@ -203,7 +203,10 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
         <ul class="items">
           <li><span class="tag t-opt">Proposed</span><span>Shared settings in <code>Directory.Build.props</code>: nullable enabled, warnings as errors, implicit usings.</span></li>
           <li><span class="tag t-opt">Proposed</span><span><code>.editorconfig</code> as the single style source: 4 spaces in C#, 2 in TS/JSON/YAML, file-scoped namespaces, LF.</span></li>
-          <li><span class="tag t-opt">Proposed</span><span>One folder per feature (<code>Features/Components</code> with endpoints, DTOs and service). Endpoints registered via an extension method such as <code>MapComponentEndpoints()</code>.</span></li>
+          <li><span class="tag t-ok">Decided</span><span>One folder per feature (<code>Features/Components</code> with entity, endpoints, DTOs and repository). Endpoints registered via an extension method such as <code>MapComponentEndpoints()</code>.</span></li>
+          <li><span class="tag t-ok">Decided</span><span>Endpoints contain no database code; data access goes through one repository per aggregate. No controller, processor or service layers.</span></li>
+          <li><span class="tag t-ok">Decided</span><span>Entity mapping and seed data configured centrally in <code>AppDbContext.OnModelCreating</code>.</span></li>
+          <li><span class="tag t-ok">Decided</span><span>Explicit types instead of <code>var</code>, enforced at build time (IDE0008 with <code>EnforceCodeStyleInBuild</code>).</span></li>
           <li><span class="tag t-opt">Proposed</span><span>Entities are never exposed by the API; request and response DTOs are declared as <code>record</code>.</span></li>
           <li><span class="tag t-opt">Proposed</span><span>Structured logging with message templates (<code>"Created component {ComponentId}"</code>), no string interpolation.</span></li>
           <li><span class="tag t-opt">Proposed</span><span><code>dotnet format --verify-no-changes</code> must pass locally; added to CI if needed.</span></li>
@@ -262,6 +265,8 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
             <tr><td>2026-10-24</td><td>Frontend linting with ESLint instead of oxlint from the Vite template, because the team knows ESLint.</td><td>#1</td></tr>
             <tr><td>2026-10-24</td><td>All documentation and project discussions in English.</td><td>#1</td></tr>
             <tr><td>2026-10-24</td><td>Provisional Component schema for the persistence flow: Name (text, not null), Description (text, defaults to empty), Quantity (integer). No validation yet; rules are decided in PR 3.</td><td>#2</td></tr>
+            <tr><td>2026-10-24</td><td>Repository classes separate data access from the endpoints; entity configuration is central in <code>AppDbContext</code>; explicit types instead of <code>var</code> everywhere.</td><td>#2</td></tr>
+            <tr><td>2026-10-24</td><td>Five demo components are seeded through an EF Core migration (<code>HasData</code>) for presentations. Seeds are inserted once; deleted presets are not restored.</td><td>#2</td></tr>
           </tbody>
         </table>
       </div>

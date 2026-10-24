@@ -31,15 +31,21 @@ No additional backend projects or architecture frameworks unless agreed.
 ## Backend (C#)
 
 - Formatting and style come from `.editorconfig`; `dotnet format --verify-no-changes` must pass.
-- Shared settings in `Directory.Build.props`: nullable enabled, implicit usings, warnings as errors.
+- Shared settings in `Directory.Build.props`: nullable enabled, implicit usings, warnings as errors,
+  code style enforced at build time.
+- Always use explicit types instead of `var` (`HttpClient client = ...`). Target-typed `new()` is fine.
+  Enforced by IDE0008 during the build.
 - File-scoped namespaces matching the folder path (`OrderManagement.Api.Features.Health`).
-- One folder per feature (`Features/Components`, `Features/Boards`, ...) containing its endpoints,
-  DTOs and, where it improves clarity or testability, a service.
+- One folder per feature (`Features/Components`, `Features/Boards`, ...) containing its entity,
+  endpoints, DTOs and repository.
+- Endpoints contain no database code. Data access goes through a repository per aggregate
+  (`IComponentRepository` / `ComponentRepository`), registered as scoped in `Program.cs`.
+  No additional controller, processor or service layers unless agreed.
 - Register endpoints with an extension method per feature, e.g. `app.MapComponentEndpoints()`.
   Keep `Program.cs` limited to wiring.
 - Never expose EF Core entities from the API. Use request and response DTOs declared as `record`.
-- Entity mapping lives in an `IEntityTypeConfiguration<T>` next to the entity; `AppDbContext` picks
-  configurations up from the assembly.
+- Entity mapping is configured centrally in `AppDbContext.OnModelCreating`; entities stay plain classes.
+- Demo data lives in `Data/SeedData.cs` and is applied with `HasData`, so it ships as a migration.
 - Schema changes always come with an EF Core migration (`dotnet ef migrations add`, local tool). Never edit
   an applied migration; generated files under `Data/Migrations` are excluded from style rules.
 - Logging through `ILogger<T>` with message templates, not string interpolation:
@@ -50,7 +56,7 @@ No additional backend projects or architecture frameworks unless agreed.
 ## Tests (NUnit)
 
 - Framework: NUnit 4 with the constraint model (`Assert.That(actual, Is.EqualTo(expected))`).
-- Test names: `Method_Situation_ExpectedResult`, e.g. `GetHealth_WhenAppIsRunning_ReturnsHealthyAsJson`.
+- Test names: `Method_Situation_ExpectedResult`, e.g. `GetHealth_WhenDatabaseIsReachable_ReturnsHealthyAsJson`.
 - Structure every test with `// Arrange`, `// Act`, `// Assert` comments. Omit `// Arrange` only when
   there is nothing to set up.
 - Group related assertions with `using (Assert.EnterMultipleScope())` so all failures are reported.

@@ -24,13 +24,13 @@ public sealed class HealthEndpointTests
     public async Task GetHealth_WhenDatabaseIsReachable_ReturnsHealthyAsJson()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using HttpClient client = _factory.CreateClient();
 
         // Act
-        var response = await client.GetAsync(HealthEndpoints.Route);
+        HttpResponseMessage response = await client.GetAsync(HealthEndpoints.Route);
 
         // Assert
-        var body = await response.Content.ReadFromJsonAsync<HealthResponse>();
+        HealthResponse? body = await response.Content.ReadFromJsonAsync<HealthResponse>();
         using (Assert.EnterMultipleScope())
         {
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));

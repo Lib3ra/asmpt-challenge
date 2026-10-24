@@ -95,7 +95,7 @@ To point Vite at a different API address, set `API_URL`, for example `API_URL=ht
 ### Local database
 
 The API creates `src/OrderManagement.Api/App_Data/app.db` on first start and applies pending migrations
-automatically. The file is git-ignored. To start with an empty database, stop the API and delete the
+automatically. A fresh database contains five demo components (defined in `Data/SeedData.cs`). The file is git-ignored. To start with an empty database, stop the API and delete the
 `App_Data` folder.
 
 The connection string is configured as `ConnectionStrings:DefaultConnection` (in `appsettings.json`, or
@@ -121,7 +121,8 @@ Open http://localhost:8080. The same container serves the React app and the API.
 - The container runs as the non-root user `app`.
 - The SQLite database lives at `/data/app.db` in the named volume `order-manager_order-manager-data`. The
   whole `/data` directory is persisted, including SQLite's `-wal` and `-shm` files.
-- Migrations are applied when the container starts.
+- Migrations are applied when the container starts. On first start the volume is empty, so the database
+  is created and filled with the five demo components; later starts reuse the existing database.
 - Logs: `docker compose logs -f app`.
 
 Data and the volume:

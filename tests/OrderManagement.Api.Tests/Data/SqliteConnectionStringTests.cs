@@ -11,7 +11,7 @@ public sealed class SqliteConnectionStringTests
     public void ResolveDataSource_WithRelativePath_MakesItAbsoluteAgainstBasePath()
     {
         // Act
-        var resolved = SqliteConnectionString.ResolveDataSource("Data Source=App_Data/app.db", BasePath);
+        string resolved = SqliteConnectionString.ResolveDataSource("Data Source=App_Data/app.db", BasePath);
 
         // Assert
         Assert.That(resolved, Is.EqualTo($"Data Source={Path.Combine(BasePath, "App_Data", "app.db")}"));
@@ -21,10 +21,10 @@ public sealed class SqliteConnectionStringTests
     public void ResolveDataSource_WithAbsolutePath_KeepsPath()
     {
         // Arrange
-        var absolute = Path.Combine(Path.GetTempPath(), "data", "app.db");
+        string absolute = Path.Combine(Path.GetTempPath(), "data", "app.db");
 
         // Act
-        var resolved = SqliteConnectionString.ResolveDataSource($"Data Source={absolute}", BasePath);
+        string resolved = SqliteConnectionString.ResolveDataSource($"Data Source={absolute}", BasePath);
 
         // Assert
         Assert.That(resolved, Is.EqualTo($"Data Source={absolute}"));
@@ -35,7 +35,7 @@ public sealed class SqliteConnectionStringTests
     public void ResolveDataSource_WithInMemoryDatabase_KeepsDataSource(string connectionString)
     {
         // Act
-        var resolved = SqliteConnectionString.ResolveDataSource(connectionString, BasePath);
+        string resolved = SqliteConnectionString.ResolveDataSource(connectionString, BasePath);
 
         // Assert
         Assert.That(resolved, Does.Not.Contain(BasePath));
@@ -45,8 +45,8 @@ public sealed class SqliteConnectionStringTests
     public void EnsureDirectoryExists_WhenDirectoryIsMissing_CreatesIt()
     {
         // Arrange
-        var root = Path.Combine(Path.GetTempPath(), "order-manager-tests", Guid.NewGuid().ToString("N"));
-        var directory = Path.Combine(root, "nested", "data");
+        string root = Path.Combine(Path.GetTempPath(), "order-manager-tests", Guid.NewGuid().ToString("N"));
+        string directory = Path.Combine(root, "nested", "data");
 
         try
         {
