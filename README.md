@@ -52,6 +52,7 @@ the source of truth for exact versions: `*.csproj` for the backend, `frontend/pa
 | Part     | Package                                              | Purpose                                     |
 | -------- | ---------------------------------------------------- | ------------------------------------------- |
 | Backend  | ASP.NET Core (shared framework)                      | Minimal API, health checks, logging, JSON   |
+| Backend  | Microsoft.AspNetCore.OpenApi, Swashbuckle.AspNetCore.SwaggerUI | OpenAPI document and Swagger UI    |
 | Backend  | Microsoft.EntityFrameworkCore.Sqlite                 | SQLite persistence                          |
 | Backend  | Microsoft.EntityFrameworkCore.Design                 | Design-time support for migrations          |
 | Backend  | Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore | Database health check          |
@@ -209,28 +210,12 @@ CI runs on every pull request and every push to `main`:
    On `main` only, the image is tagged with the commit SHA, exported with `docker save`, gzip-compressed
    and uploaded as an artifact (kept for 30 days).
 
-## API
+## API documentation
 
-All request and response bodies are JSON. Errors use the problem details format (RFC 9457); validation errors
-list messages per field, keyed like the request (`name`, or `[1].quantity` for the second item of a list).
+The API documents itself with OpenAPI, generated from the endpoint definitions:
 
-| Method | Route                        | Description                                                         |
-| ------ | ---------------------------- | ------------------------------------------------------------------- |
-| GET    | `/api/health`                | Health status including the database, e.g. `{"status":"Healthy"}`   |
-| GET    | `/api/components?name=res`   | Components ordered by name; optional case-insensitive name filter   |
-| GET    | `/api/components/{id}`       | One component, or 404                                               |
-| POST   | `/api/components`            | Create one or more components (JSON array); all-or-nothing           |
-| PUT    | `/api/components/{id}`       | Update one component                                                |
-| DELETE | `/api/components?ids=1&ids=2`| Delete one or more components; all-or-nothing, 404 if an id is unknown |
+- Swagger UI: http://localhost:8080/swagger (Docker) or http://localhost:5080/swagger (`dotnet run`)
+- OpenAPI document: `/openapi/v1.json`
 
-Example: create two components in one request.
-
-```sh
-curl -X POST http://localhost:8080/api/components \
-  -H 'Content-Type: application/json' \
-  -d '[{"name":"Crystal 8 MHz","description":"HC-49 SMD","quantity":1},
-       {"name":"Diode 1N4148","description":"SOD-123","quantity":6}]'
-```
-
-Component rules: Name required (trimmed, max 256 characters, unique ignoring case), Description optional
-(max 2000), Quantity 1 to 10,000 copies per board.
+Both are available in every environment, because the app has no authentication and the Docker demo runs in
+Production mode. All endpoints live under `/api`; errors use the problem details format (RFC 9457).

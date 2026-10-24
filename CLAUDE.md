@@ -61,6 +61,8 @@ No additional backend projects or architecture frameworks unless agreed.
 - Validation without database access lives in a static `<Entity>Validator` built on `Common/Validation`;
   checks that need the database (unique names, existence) go through the repository. Validation errors are
   returned with `TypedResults.ValidationProblem`, keyed like the JSON request (`name`, `[1].quantity`).
+- Document every endpoint in code with `WithSummary` / `WithDescription` (rules, all-or-nothing behavior);
+  it ends up in the OpenAPI document and Swagger UI. The README does not list endpoints.
 - "One or more" endpoints: `POST` takes a JSON array, `DELETE` takes `?ids=`; both are all-or-nothing.
 - User-facing messages are culture-invariant (no server-locale number formatting).
 - Logging through `ILogger<T>` with message templates, not string interpolation:

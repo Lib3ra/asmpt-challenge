@@ -10,12 +10,23 @@ public static class ComponentEndpoints
 
     public static IEndpointRouteBuilder MapComponentEndpoints(this IEndpointRouteBuilder app)
     {
-        RouteGroupBuilder group = app.MapGroup(Route);
-        group.MapGet("/", SearchAsync);
-        group.MapGet("/{id:int}", GetByIdAsync);
-        group.MapPost("/", CreateAsync);
-        group.MapPut("/{id:int}", UpdateAsync);
-        group.MapDelete("/", DeleteAsync);
+        RouteGroupBuilder group = app.MapGroup(Route).WithTags("Components");
+        group.MapGet("/", SearchAsync)
+            .WithSummary("List components")
+            .WithDescription("Ordered by name. The optional 'name' filter matches case-insensitively anywhere in the name.");
+        group.MapGet("/{id:int}", GetByIdAsync)
+            .WithSummary("Get one component");
+        group.MapPost("/", CreateAsync)
+            .WithSummary("Create one or more components")
+            .WithDescription("Takes a JSON array. All-or-nothing: if any item is invalid, nothing is stored and the "
+                + "errors are keyed by item, e.g. '[1].quantity'. Name: required, max 256, unique ignoring case. "
+                + "Description: optional, max 2000. Quantity: 1 to 10,000 copies per board.");
+        group.MapPut("/{id:int}", UpdateAsync)
+            .WithSummary("Update one component")
+            .WithDescription("Same rules as create; the name must not belong to another component.");
+        group.MapDelete("/", DeleteAsync)
+            .WithSummary("Delete one or more components")
+            .WithDescription("Pass the ids as '?ids=1&ids=2'. All-or-nothing: if any id is unknown, nothing is deleted.");
         return app;
     }
 

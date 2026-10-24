@@ -11,6 +11,9 @@ builder.Services.AddHealthChecks().AddDbContextCheck<AppDbContext>();
 // Error responses (404, 500, ...) use the RFC 9457 problem details format.
 builder.Services.AddProblemDetails();
 
+// OpenAPI document at /openapi/v1.json, generated from the endpoint definitions.
+builder.Services.AddOpenApi();
+
 WebApplication app = builder.Build();
 
 await app.ApplyMigrationsAsync();
@@ -27,11 +30,20 @@ if (Directory.Exists(app.Environment.WebRootPath))
     app.UseStaticFiles();
 }
 
+// API documentation is available in every environment: the app has no authentication and the
+// containerized demo runs in Production. Swagger UI at /swagger reads the generated document.
+app.MapOpenApi();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/openapi/v1.json", "Order Manager API");
+    options.DocumentTitle = "Order Manager API";
+});
+
 app.MapHealthEndpoints();
 app.MapComponentEndpoints();
 
 // Unknown API routes return 404 instead of falling through to the React app.
-app.Map("/api/{**path}", () => Results.NotFound());
+app.Map("/api/{**path}", () => Results.NotFound()).ExcludeFromDescription();
 app.MapFallbackToFile("index.html");
 
 await app.RunAsync();
