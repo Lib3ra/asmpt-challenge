@@ -93,7 +93,7 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
     <span class="eyebrow">ASMPT Coding Challenge · Project handbook</span>
     <h1>Order Manager Handbook</h1>
     <p class="lede">Alignment with the task description, agreed technical decisions, code conventions and the PR plan. This document is updated with every PR.</p>
-    <div class="meta"><span>Repo: Lib3ra/asmpt-challenge</span><span>As of: 2026-10-24</span><span>Current step: PR 1</span></div>
+    <div class="meta"><span>Repo: Lib3ra/asmpt-challenge</span><span>As of: 2026-10-24</span><span>Current step: PR 2</span></div>
   </header>
 
   <section>
@@ -183,7 +183,9 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
             <tr><td>Operation</td><td>Single instance, no authentication, no cloud deployment</td><td><span class="tag t-ok">Decided</span></td></tr>
             <tr><td>Structure</td><td><code>src/OrderManagement.Api</code>, <code>tests/OrderManagement.Api.Tests</code>, <code>frontend/</code>; endpoints grouped by feature</td><td><span class="tag t-opt">Proposed</span></td></tr>
             <tr><td>Logging</td><td><code>Microsoft.Extensions.Logging</code> (<code>ILogger&lt;T&gt;</code>) with the console provider; visible in the container via <code>docker logs</code></td><td><span class="tag t-opt">Proposed</span></td></tr>
-            <tr><td>Health</td><td>ASP.NET Core health checks at <code>/api/health</code> with a JSON response; database check added in PR 2</td><td><span class="tag t-opt">Proposed</span></td></tr>
+            <tr><td>Health</td><td>ASP.NET Core health checks at <code>/api/health</code> with a JSON response, including an EF Core database check</td><td><span class="tag t-opt">Proposed</span></td></tr>
+            <tr><td>Local DB</td><td>Development database at <code>src/OrderManagement.Api/App_Data/app.db</code> (git-ignored); relative paths are resolved against the API project folder</td><td><span class="tag t-opt">Proposed</span></td></tr>
+            <tr><td>CI smoke test</td><td>The Docker job starts the built image and checks <code>/api/health</code> before exporting it (optional addition)</td><td><span class="tag t-opt">Proposed</span></td></tr>
             <tr><td>Node</td><td>Node 24 LTS in CI and the Docker build; <code>package-lock.json</code> committed</td><td><span class="tag t-opt">Proposed</span></td></tr>
           </tbody>
         </table>
@@ -201,7 +203,10 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
         <ul class="items">
           <li><span class="tag t-opt">Proposed</span><span>Shared settings in <code>Directory.Build.props</code>: nullable enabled, warnings as errors, implicit usings.</span></li>
           <li><span class="tag t-opt">Proposed</span><span><code>.editorconfig</code> as the single style source: 4 spaces in C#, 2 in TS/JSON/YAML, file-scoped namespaces, LF.</span></li>
-          <li><span class="tag t-opt">Proposed</span><span>One folder per feature (<code>Features/Components</code> with endpoints, DTOs and service). Endpoints registered via an extension method such as <code>MapComponentEndpoints()</code>.</span></li>
+          <li><span class="tag t-ok">Decided</span><span>One folder per feature (<code>Features/Components</code> with entity, endpoints, DTOs and repository). Endpoints registered via an extension method such as <code>MapComponentEndpoints()</code>.</span></li>
+          <li><span class="tag t-ok">Decided</span><span>Endpoints contain no database code; data access goes through one repository per aggregate. No controller, processor or service layers.</span></li>
+          <li><span class="tag t-ok">Decided</span><span>Entity mapping and seed data configured centrally in <code>AppDbContext.OnModelCreating</code>.</span></li>
+          <li><span class="tag t-ok">Decided</span><span>Explicit types instead of <code>var</code>, enforced at build time (IDE0008 with <code>EnforceCodeStyleInBuild</code>).</span></li>
           <li><span class="tag t-opt">Proposed</span><span>Entities are never exposed by the API; request and response DTOs are declared as <code>record</code>.</span></li>
           <li><span class="tag t-opt">Proposed</span><span>Structured logging with message templates (<code>"Created component {ComponentId}"</code>), no string interpolation.</span></li>
           <li><span class="tag t-opt">Proposed</span><span><code>dotnet format --verify-no-changes</code> must pass locally; added to CI if needed.</span></li>
@@ -232,8 +237,8 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
     <div class="body">
       <h2>PR plan</h2>
       <ol class="prs">
-        <li class="active"><div class="pr-head"><span class="pr-num">PR 1</span><h3>Scaffold and first CI</h3><span class="tag t-open">In review</span></div><p class="pr-text">Minimal API with health endpoint, NUnit project with an integration test, React page showing the API status, .gitignore, .dockerignore, README, CLAUDE.md, CI for backend and frontend.</p></li>
-        <li><div class="pr-head"><span class="pr-num">PR 2</span><h3>Docker, SQLite and artifact</h3></div><p class="pr-text">Multi-stage Dockerfile, non-root, Compose with volume, EF Core with first migration, minimal component persistence flow, image artifact on main.</p></li>
+        <li><div class="pr-head"><span class="pr-num">PR 1</span><h3>Scaffold and first CI</h3><span class="tag t-ok">Merged</span></div><p class="pr-text">Minimal API with health endpoint, NUnit project with an integration test, React page showing the API status, .gitignore, .dockerignore, README, CLAUDE.md, CI for backend and frontend.</p></li>
+        <li class="active"><div class="pr-head"><span class="pr-num">PR 2</span><h3>Docker, SQLite and artifact</h3><span class="tag t-open">In review</span></div><p class="pr-text">Multi-stage Dockerfile, non-root, Compose with volume, EF Core with first migration, minimal component persistence flow, image artifact on main.</p></li>
         <li><div class="pr-head"><span class="pr-num">PR 3</span><h3>Components</h3></div><p class="pr-text">CRUD and search in API and UI, Quantity on Component, validation rules decided together.</p></li>
         <li><div class="pr-head"><span class="pr-num">PR 4</span><h3>Boards</h3></div><p class="pr-text">CRUD, search, component assignments, decide delete behavior.</p></li>
         <li><div class="pr-head"><span class="pr-num">PR 5</span><h3>Orders</h3></div><p class="pr-text">CRUD, search, board assignments, complete the bulk operations.</p></li>
@@ -259,6 +264,11 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
             <tr><td>2026-10-24</td><td>Generic application name “Order Manager” instead of “SMT Order Manager”.</td><td>#1</td></tr>
             <tr><td>2026-10-24</td><td>Frontend linting with ESLint instead of oxlint from the Vite template, because the team knows ESLint.</td><td>#1</td></tr>
             <tr><td>2026-10-24</td><td>All documentation and project discussions in English.</td><td>#1</td></tr>
+            <tr><td>2026-10-24</td><td>Provisional Component schema for the persistence flow: Name (text, not null), Description (text, defaults to empty), Quantity (integer). No validation yet; rules are decided in PR 3.</td><td>#2</td></tr>
+            <tr><td>2026-10-24</td><td>Repository classes separate data access from the endpoints; entity configuration is central in <code>AppDbContext</code>; explicit types instead of <code>var</code> everywhere.</td><td>#2</td></tr>
+            <tr><td>2026-10-24</td><td>Five demo components are seeded through an EF Core migration (<code>HasData</code>) for presentations. Seeds are inserted once; deleted presets are not restored.</td><td>#2</td></tr>
+            <tr><td>2026-10-24</td><td>Component Name max 256 and Description max 2000 characters. SQLite does not enforce lengths, so request validation in PR 3 must. No extra index on Id (INTEGER PRIMARY KEY is the rowid).</td><td>#2</td></tr>
+            <tr><td>2026-10-24</td><td>Repositories are scoped like the DbContext; Minimal API handlers are static. CancellationToken is passed through (open: may be removed if leaner signatures are preferred).</td><td>#2</td></tr>
           </tbody>
         </table>
       </div>

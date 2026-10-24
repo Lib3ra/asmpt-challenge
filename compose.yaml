@@ -1,0 +1,19 @@
+# Fixed project name so the volume is always called order-manager_order-manager-data.
+name: order-manager
+
+services:
+  app:
+    build: .
+    # IMAGE_TAG selects a prebuilt image, e.g. one loaded from the CI artifact.
+    image: order-manager:${IMAGE_TAG:-local}
+    ports:
+      - "8080:8080"
+    environment:
+      ConnectionStrings__DefaultConnection: "Data Source=/data/app.db"
+    volumes:
+      # The whole directory is persisted, including SQLite's -wal and -shm companion files.
+      - order-manager-data:/data
+    restart: unless-stopped
+
+volumes:
+  order-manager-data:
