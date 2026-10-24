@@ -5,6 +5,7 @@ import { useNameSearch } from '../../hooks/useNameSearch'
 import { useSelection } from '../../hooks/useSelection'
 import { DeleteSelection } from '../../ui/DeleteSelection'
 import { BoardForm } from './BoardForm'
+import { componentLabel } from './componentLabel'
 
 export function BoardsPage() {
   const { nameFilter, setNameFilter, state, items: boards, reload } = useNameSearch(searchBoards)
@@ -117,7 +118,7 @@ export function BoardsPage() {
                     <td className="number">
                       {board.lengthMm} × {board.widthMm}
                     </td>
-                    <td>{board.components.map((component) => component.name).join(', ')}</td>
+                    <td>{board.components.map(componentLabel).join(', ')}</td>
                     <td className="row-actions">
                       <button type="button" className="link-button" onClick={() => setEditing(board)}>
                         Edit

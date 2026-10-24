@@ -4,6 +4,7 @@ import type { Component } from '../../api/components'
 import { ApiError, errorMessage, type FieldErrors } from '../../api/http'
 import { CheckboxList } from '../../ui/CheckboxList'
 import { FieldError } from '../../ui/FieldError'
+import { componentLabel } from './componentLabel'
 
 type BoardFormProps = {
   /** The board being edited, or null to create a new one. */
@@ -126,8 +127,8 @@ export function BoardForm({ board, components, onSaved, onCancel }: BoardFormPro
       </div>
       <CheckboxList
         id="board-component"
-        legend="Components"
-        options={components.map((component) => ({ id: component.id, label: component.name }))}
+        legend="Components (copies per board)"
+        options={components.map((component) => ({ id: component.id, label: componentLabel(component) }))}
         selectedIds={draft.componentIds}
         invalid={Boolean(fieldErrors.componentIds)}
         onChange={(componentIds) => setDraft({ ...draft, componentIds })}
