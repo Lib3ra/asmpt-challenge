@@ -23,6 +23,12 @@ public sealed class OrderRepository(AppDbContext db, ILogger<OrderRepository> lo
     public Task<Order?> GetOrderByIdAsync(int id, CancellationToken cancellationToken) =>
         db.Orders.AsNoTracking().Include(o => o.Boards).FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
 
+    public Task<Order?> GetOrderForProductionAsync(int id, CancellationToken cancellationToken) =>
+        db.Orders.AsNoTracking()
+            .Include(o => o.Boards)
+            .ThenInclude(b => b.Components)
+            .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
+
     public Task<bool> NameExistsAsync(string name, int? excludeId, CancellationToken cancellationToken) =>
         // The Name column uses the NOCASE collation, so = compares case-insensitively.
         db.Orders.AnyAsync(o => o.Name == name && o.Id != excludeId, cancellationToken);

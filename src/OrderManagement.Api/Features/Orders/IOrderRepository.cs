@@ -12,6 +12,9 @@ public interface IOrderRepository
     /// <summary>One order with its boards.</summary>
     Task<Order?> GetOrderByIdAsync(int id, CancellationToken cancellationToken);
 
+    /// <summary>One order with its boards and their components, as handed to production.</summary>
+    Task<Order?> GetOrderForProductionAsync(int id, CancellationToken cancellationToken);
+
     /// <summary>Whether an order other than <paramref name="excludeId"/> already uses <paramref name="name"/> (case-insensitive).</summary>
     Task<bool> NameExistsAsync(string name, int? excludeId, CancellationToken cancellationToken);
 
