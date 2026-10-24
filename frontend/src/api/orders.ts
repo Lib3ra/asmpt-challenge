@@ -36,6 +36,14 @@ export function updateOrder(id: number, input: OrderInput): Promise<Order> {
   return apiRequest<Order>(`${route}/${id}`, { method: 'PUT', body: JSON.stringify(input) })
 }
 
+/**
+ * Address of the production download: the server sends the order with its boards and components as a JSON
+ * file (Content-Disposition attachment), so a plain link saves it without loading it into the page.
+ */
+export function productionDownloadUrl(id: number): string {
+  return `${route}/${id}/production-download`
+}
+
 /** Deletes one or more orders; all-or-nothing on the server. */
 export function deleteOrders(ids: number[]): Promise<void> {
   const query = ids.map((id) => `ids=${id}`).join('&')

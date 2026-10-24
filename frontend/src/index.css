@@ -349,6 +349,10 @@ td input:not([type='checkbox']) {
   text-align: right;
 }
 
+.row-actions a {
+  padding: 0.25rem;
+}
+
 tr.editing td {
   background: var(--bg);
 }
