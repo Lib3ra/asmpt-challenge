@@ -33,6 +33,12 @@ public static class EntityRuleExtensions
             HashSet<string> seen = new(StringComparer.OrdinalIgnoreCase);
             for (int index = 0; index < items.Count; index++)
             {
+                // Missing items (null in the JSON array) are reported by the item rules.
+                if (items[index] is null)
+                {
+                    continue;
+                }
+
                 string name = nameOf(items[index])?.Trim() ?? string.Empty;
                 if (name.Length > 0 && !seen.Add(name))
                 {

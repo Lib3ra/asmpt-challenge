@@ -21,7 +21,16 @@ public sealed record SearchRequest(
     public string NormalizedTerm => Term?.Trim() ?? string.Empty;
 
     /// <summary>The requested type, or null for all types. Only valid after validation.</summary>
-    public SearchType? ParsedType => string.IsNullOrWhiteSpace(Type) ? null : Enum.Parse<SearchType>(Type.Trim(), ignoreCase: true);
+    public SearchType? ParsedType => string.IsNullOrWhiteSpace(Type) ? null : FindType(Type);
+
+    /// <summary>
+    /// Matches a type by name only, ignoring case. Unlike <c>Enum.TryParse</c> it rejects numbers ("7") and
+    /// comma-separated lists ("orders,boards").
+    /// </summary>
+    public static SearchType? FindType(string text) =>
+        Enum.GetValues<SearchType>()
+            .Select(type => (SearchType?)type)
+            .FirstOrDefault(type => string.Equals(type.ToString(), text.Trim(), StringComparison.OrdinalIgnoreCase));
 
     public bool Includes(SearchType type) => ParsedType is null || ParsedType == type;
 }

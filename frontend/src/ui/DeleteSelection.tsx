@@ -8,13 +8,19 @@ type DeleteSelectionProps = {
   onClear: () => void
 }
 
-/** Bulk delete bar with an in-page confirmation step. */
-export function DeleteSelection({ count, noun, onDelete, onClear }: DeleteSelectionProps) {
+/**
+ * Bulk delete bar with an in-page confirmation step. Hidden while nothing is selected. Changing the selection
+ * starts the bar afresh (key), so a pending confirmation or an earlier error never applies to other records.
+ */
+export function DeleteSelection(props: DeleteSelectionProps) {
+  return props.count === 0 ? null : <DeleteSelectionBar key={props.count} {...props} />
+}
+
+function DeleteSelectionBar({ count, noun, onDelete, onClear }: DeleteSelectionProps) {
   const [confirming, setConfirming] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  if (count === 0) return null
   const label = `${count} ${noun}${count === 1 ? '' : 's'}`
 
   async function confirmDelete() {

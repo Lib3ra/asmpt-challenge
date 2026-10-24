@@ -15,7 +15,7 @@ public sealed class SearchRequestValidator : AbstractValidator<SearchRequest>
             .WithMessage($"Search term must be at most {EntityLimits.NameMaxLength} characters.");
 
         RuleFor(request => request.Type)
-            .Must(type => string.IsNullOrWhiteSpace(type) || Enum.TryParse(type.Trim(), ignoreCase: true, out SearchType _))
+            .Must(type => string.IsNullOrWhiteSpace(type) || SearchRequest.FindType(type) is not null)
             .WithMessage("Type must be orders, boards or components.");
     }
 }
