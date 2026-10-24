@@ -1,60 +1,21 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { deleteComponents, searchComponents, type Component } from '../../api/components'
-import { errorMessage } from '../../api/http'
+import { useNameSearch } from '../../hooks/useNameSearch'
+import { useSelection } from '../../hooks/useSelection'
 import { DeleteSelection } from '../../ui/DeleteSelection'
 import { ComponentCreateForm } from './ComponentCreateForm'
 import { ComponentRow } from './ComponentRow'
 
-const searchDelayMs = 250
-
-type LoadState = { kind: 'loading' } | { kind: 'ready'; components: Component[] } | { kind: 'error'; message: string }
-
 export function ComponentsPage() {
-  const [nameFilter, setNameFilter] = useState('')
-  const [reloadToken, setReloadToken] = useState(0)
-  const [state, setState] = useState<LoadState>({ kind: 'loading' })
-  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
+  const { nameFilter, setNameFilter, state, items: components, reload } = useNameSearch(searchComponents)
+  const selection = useSelection(components)
   const [notice, setNotice] = useState<string | null>(null)
 
-  useEffect(() => {
-    const controller = new AbortController()
-    const timer = setTimeout(() => {
-      searchComponents(nameFilter, controller.signal)
-        .then((components) => setState({ kind: 'ready', components }))
-        .catch((error: unknown) => {
-          if (!controller.signal.aborted) setState({ kind: 'error', message: errorMessage(error) })
-        })
-    }, searchDelayMs)
-    return () => {
-      clearTimeout(timer)
-      controller.abort()
-    }
-  }, [nameFilter, reloadToken])
-
-  const components = state.kind === 'ready' ? state.components : []
-  const visibleSelectedIds = components.filter((component) => selectedIds.has(component.id)).map((c) => c.id)
-  const allSelected = components.length > 0 && visibleSelectedIds.length === components.length
-
-  function reload() {
-    setReloadToken((token) => token + 1)
-  }
-
-  function toggleSelected(id: number) {
-    setSelectedIds((current) => {
-      const next = new Set(current)
-      if (!next.delete(id)) next.add(id)
-      return next
-    })
-  }
-
-  function toggleAll() {
-    setSelectedIds(allSelected ? new Set() : new Set(components.map((component) => component.id)))
-  }
-
   async function deleteSelected() {
-    await deleteComponents(visibleSelectedIds)
-    setNotice(`Deleted ${visibleSelectedIds.length} component${visibleSelectedIds.length === 1 ? '' : 's'}.`)
-    setSelectedIds(new Set())
+    const count = selection.selectedIds.length
+    await deleteComponents(selection.selectedIds)
+    setNotice(`Deleted ${count} component${count === 1 ? '' : 's'}.`)
+    selection.clear()
     reload()
   }
 
@@ -97,10 +58,10 @@ export function ComponentsPage() {
         </div>
 
         <DeleteSelection
-          count={visibleSelectedIds.length}
+          count={selection.selectedIds.length}
           noun="component"
           onDelete={deleteSelected}
-          onClear={() => setSelectedIds(new Set())}
+          onClear={selection.clear}
         />
 
         {state.kind === 'loading' && <p className="muted">Loading components…</p>}
@@ -119,9 +80,9 @@ export function ComponentsPage() {
                     <input
                       id="select-all-components"
                       type="checkbox"
-                      checked={allSelected}
+                      checked={selection.allSelected}
                       aria-label="Select all components"
-                      onChange={toggleAll}
+                      onChange={selection.toggleAll}
                     />
                   </th>
                   <th>Name</th>
@@ -137,8 +98,8 @@ export function ComponentsPage() {
                   <ComponentRow
                     key={component.id}
                     component={component}
-                    selected={selectedIds.has(component.id)}
-                    onToggleSelected={toggleSelected}
+                    selected={selection.isSelected(component.id)}
+                    onToggleSelected={selection.toggle}
                     onSaved={handleSaved}
                   />
                 ))}
