@@ -12,14 +12,14 @@ decisions, conventions and the delivery plan are tracked in [`docs/project-handb
 | -------- | -------------------------------------------------------- |
 | Backend  | C# / ASP.NET Core Minimal API on .NET 10                 |
 | Frontend | React + TypeScript, built with Vite                      |
-| Tests    | xUnit (`tests/OrderManagement.Api.Tests`)                |
+| Tests    | NUnit (`tests/OrderManagement.Api.Tests`)                |
 | CI       | GitHub Actions (`.github/workflows/ci.yml`)              |
 
 ## Repository layout
 
 ```
 src/OrderManagement.Api/          ASP.NET Core Minimal API, endpoints grouped by feature
-tests/OrderManagement.Api.Tests/  xUnit tests (unit and integration)
+tests/OrderManagement.Api.Tests/  NUnit tests (unit and integration)
 frontend/                         React + TypeScript + Vite app
 docs/                             Project handbook (decisions, conventions, plan)
 ```

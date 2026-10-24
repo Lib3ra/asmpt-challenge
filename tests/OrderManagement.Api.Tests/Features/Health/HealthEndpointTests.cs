@@ -5,19 +5,30 @@ using OrderManagement.Api.Features.Health;
 
 namespace OrderManagement.Api.Tests.Features.Health;
 
-public sealed class HealthEndpointTests(WebApplicationFactory<Program> factory)
-    : IClassFixture<WebApplicationFactory<Program>>
+[TestFixture]
+public sealed class HealthEndpointTests
 {
-    [Fact]
+    private WebApplicationFactory<Program> _factory = null!;
+
+    [OneTimeSetUp]
+    public void StartApplication() => _factory = new WebApplicationFactory<Program>();
+
+    [OneTimeTearDown]
+    public void StopApplication() => _factory.Dispose();
+
+    [Test]
     public async Task GetHealth_WhenAppIsRunning_ReturnsHealthyAsJson()
     {
-        using var client = factory.CreateClient();
+        using var client = _factory.CreateClient();
 
         var response = await client.GetAsync(HealthEndpoints.Route);
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
         var body = await response.Content.ReadFromJsonAsync<HealthResponse>();
-        Assert.Equal("Healthy", body?.Status);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(response.Content.Headers.ContentType?.MediaType, Is.EqualTo("application/json"));
+            Assert.That(body?.Status, Is.EqualTo("Healthy"));
+        }
     }
 }
