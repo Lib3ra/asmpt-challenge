@@ -96,6 +96,8 @@ No additional backend projects or architecture frameworks unless agreed.
 - Function components and hooks only.
 - All HTTP calls live in `src/api/`; components never call `fetch` directly. API paths start with
   `/api` so the Vite dev proxy and the production host both work.
+- Keep the UI minimal: plain forms and tables, no extra widgets or styling beyond what a task needs.
+- Pages are routed with React Router (`/components`, later `/boards`, `/orders`); the header uses `NavLink`.
 - No UI library or global state manager until there is a concrete need.
 - Show server validation messages next to the field they belong to; never use `alert`/`confirm`, confirm
   destructive actions in the page.

@@ -38,6 +38,10 @@ body {
   background: var(--bg);
 }
 
+a {
+  color: var(--accent);
+}
+
 h1,
 h2 {
   margin: 0;
@@ -85,7 +89,7 @@ main {
   border-bottom: 2px solid transparent;
 }
 
-.app-header nav a[aria-current='page'] {
+.app-header nav a.active {
   border-bottom-color: var(--accent);
 }
 

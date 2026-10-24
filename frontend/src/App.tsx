@@ -1,3 +1,4 @@
+import { Navigate, NavLink, Route, Routes } from 'react-router'
 import { ComponentsPage } from './features/components/ComponentsPage'
 
 function App() {
@@ -6,15 +7,28 @@ function App() {
       <header className="app-header">
         <span className="app-title">Order Manager</span>
         <nav aria-label="Main">
-          <a href="/" aria-current="page">
-            Components
-          </a>
+          <NavLink to="/components">Components</NavLink>
         </nav>
       </header>
       <main>
-        <ComponentsPage />
+        <Routes>
+          <Route path="/" element={<Navigate to="/components" replace />} />
+          <Route path="/components" element={<ComponentsPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
       </main>
     </>
+  )
+}
+
+function NotFoundPage() {
+  return (
+    <section className="page">
+      <h1>Page not found</h1>
+      <p className="muted">
+        <NavLink to="/components">Go to components</NavLink>
+      </p>
+    </section>
   )
 }
 

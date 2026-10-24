@@ -62,6 +62,7 @@ the source of truth for exact versions: `*.csproj` for the backend, `frontend/pa
 | Tests    | Microsoft.AspNetCore.Mvc.Testing                     | Runs the API in memory for integration tests |
 | Tests    | Microsoft.NET.Test.Sdk, coverlet.collector           | `dotnet test` host and code coverage        |
 | Frontend | react, react-dom                                     | UI                                          |
+| Frontend | react-router                                         | Pages with their own URLs (`/components`)   |
 | Frontend | vite, @vitejs/plugin-react                           | Dev server with API proxy, production build |
 | Frontend | typescript                                           | Type checking                               |
 | Frontend | eslint, typescript-eslint, eslint-plugin-react-hooks, eslint-plugin-react-refresh | Linting |
