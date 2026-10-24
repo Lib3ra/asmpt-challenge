@@ -21,9 +21,13 @@ how we write and ship code. Change it through a pull request like any other code
 
 ```
 src/OrderManagement.Api/          Minimal API; one folder per feature under Features/
+  Common/Validation/              Validation rules shared by all entities (EntityRules, ValidationErrors)
   Data/                           DbContext, startup migration, EF Core migrations (generated)
 tests/OrderManagement.Api.Tests/  NUnit tests, mirroring the Features/ structure
 frontend/                         React + TypeScript + Vite
+  src/api/                        HTTP calls and API types, one module per resource
+  src/features/<feature>/         Pages and feature-specific components
+  src/ui/                         Reusable UI pieces (field errors, delete selection)
 docs/                             Project handbook
 ```
 
@@ -54,6 +58,11 @@ No additional backend projects or architecture frameworks unless agreed.
   `Component.NameMaxLength`, so database mapping and validation share one value.
 - Rely on EF Core conventions (table names, keys) and configure only what deviates from them.
 - Descriptive names, no abbreviations: `componentRepository`, `cancellationToken` (not `repository`, `ct`).
+- Validation without database access lives in a static `<Entity>Validator` built on `Common/Validation`;
+  checks that need the database (unique names, existence) go through the repository. Validation errors are
+  returned with `TypedResults.ValidationProblem`, keyed like the JSON request (`name`, `[1].quantity`).
+- "One or more" endpoints: `POST` takes a JSON array, `DELETE` takes `?ids=`; both are all-or-nothing.
+- User-facing messages are culture-invariant (no server-locale number formatting).
 - Logging through `ILogger<T>` with message templates, not string interpolation:
   `logger.LogInformation("Created component {ComponentId}", id)`.
 - Apply SOLID and DRY pragmatically; introduce an abstraction only when it has a second use or makes
@@ -78,6 +87,8 @@ No additional backend projects or architecture frameworks unless agreed.
 - All HTTP calls live in `src/api/`; components never call `fetch` directly. API paths start with
   `/api` so the Vite dev proxy and the production host both work.
 - No UI library or global state manager until there is a concrete need.
+- Show server validation messages next to the field they belong to; never use `alert`/`confirm`, confirm
+  destructive actions in the page.
 
 ## Git and pull requests
 

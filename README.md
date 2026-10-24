@@ -5,7 +5,7 @@ manufacturing environment. The task description is in [`ASMPT_Coding_Challenge_E
 decisions and the delivery plan are tracked in [`docs/project-handbook.html`](docs/project-handbook.html).
 Code style and working conventions are in [`CLAUDE.md`](CLAUDE.md).
 
-> Status: scaffold, SQLite persistence and Docker delivery (PR 2). Domain features follow in later pull requests.
+> Status: components are fully managed (PR 4). Boards, orders, global search and the production download follow.
 
 ## Tech stack
 
@@ -211,11 +211,26 @@ CI runs on every pull request and every push to `main`:
 
 ## API
 
-| Method | Route                  | Description                                                    |
-| ------ | ---------------------- | -------------------------------------------------------------- |
-| GET    | `/api/health`          | Health status including the database, e.g. `{"status":"Healthy"}` |
-| GET    | `/api/components`      | All components                                                 |
-| GET    | `/api/components/{id}` | One component, or 404                                          |
-| POST   | `/api/components`      | Create a component: `{"name":"...","description":"...","quantity":1}` |
+All request and response bodies are JSON. Errors use the problem details format (RFC 9457); validation errors
+list messages per field, keyed like the request (`name`, or `[1].quantity` for the second item of a list).
 
-The component endpoints are a minimal persistence flow. Full CRUD, search and validation follow in PR 4 (Components).
+| Method | Route                        | Description                                                         |
+| ------ | ---------------------------- | ------------------------------------------------------------------- |
+| GET    | `/api/health`                | Health status including the database, e.g. `{"status":"Healthy"}`   |
+| GET    | `/api/components?name=res`   | Components ordered by name; optional case-insensitive name filter   |
+| GET    | `/api/components/{id}`       | One component, or 404                                               |
+| POST   | `/api/components`            | Create one or more components (JSON array); all-or-nothing           |
+| PUT    | `/api/components/{id}`       | Update one component                                                |
+| DELETE | `/api/components?ids=1&ids=2`| Delete one or more components; all-or-nothing, 404 if an id is unknown |
+
+Example: create two components in one request.
+
+```sh
+curl -X POST http://localhost:8080/api/components \
+  -H 'Content-Type: application/json' \
+  -d '[{"name":"Crystal 8 MHz","description":"HC-49 SMD","quantity":1},
+       {"name":"Diode 1N4148","description":"SOD-123","quantity":6}]'
+```
+
+Component rules: Name required (trimmed, max 256 characters, unique ignoring case), Description optional
+(max 2000), Quantity 1 to 10,000 copies per board.
