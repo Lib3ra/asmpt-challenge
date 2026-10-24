@@ -82,6 +82,7 @@ No additional backend projects or architecture frameworks unless agreed.
   (`componentIds`); the validator checks "at least one" and duplicates, the endpoint checks existence
   through the repository in step 2.
 - SQLite cannot translate correlated `SelectMany` (needs SQL APPLY); load with `Include` and project in memory.
+- Dates without time (`Order.OrderDate`) are `DateOnly`, sent as `yyyy-MM-dd`; SQLite stores them as sortable text.
 - User-facing messages are culture-invariant (no server-locale number formatting).
 - Logging through `ILogger<T>` with message templates, not string interpolation:
   `logger.LogInformation("Created component {ComponentId}", id)`.
