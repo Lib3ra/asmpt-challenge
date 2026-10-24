@@ -29,6 +29,9 @@ jobs:
       - name: Build
         run: dotnet build AsmptChallenge.slnx --configuration Release --no-restore
 
+      - name: Check formatting
+        run: dotnet format AsmptChallenge.slnx --verify-no-changes --no-restore
+
       - name: Test
         run: dotnet test AsmptChallenge.slnx --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
 
