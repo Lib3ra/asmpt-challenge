@@ -47,7 +47,12 @@ No additional backend projects or architecture frameworks unless agreed.
 - Entity mapping is configured centrally in `AppDbContext.OnModelCreating`; entities stay plain classes.
 - Demo data lives in `Data/SeedData.cs` and is applied with `HasData`, so it ships as a migration.
 - Schema changes always come with an EF Core migration (`dotnet ef migrations add`, local tool). Never edit
-  an applied migration; generated files under `Data/Migrations` are excluded from style rules.
+  or remove a migration that is on `main`; migrations that exist only on an unmerged branch may be
+  regenerated. Generated files under `Data/Migrations` are excluded from style rules.
+- String properties get a maximum length (`HasMaxLength`) from a constant on the entity, e.g.
+  `Component.NameMaxLength`, so database mapping and validation share one value.
+- Rely on EF Core conventions (table names, keys) and configure only what deviates from them.
+- Descriptive names, no abbreviations: `componentRepository`, `cancellationToken` (not `repository`, `ct`).
 - Logging through `ILogger<T>` with message templates, not string interpolation:
   `logger.LogInformation("Created component {ComponentId}", id)`.
 - Apply SOLID and DRY pragmatically; introduce an abstraction only when it has a second use or makes

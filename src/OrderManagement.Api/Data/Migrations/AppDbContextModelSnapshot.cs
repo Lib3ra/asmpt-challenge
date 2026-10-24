@@ -24,10 +24,12 @@ namespace OrderManagement.Api.Data.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
+                        .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(256)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Quantity")
@@ -35,7 +37,7 @@ namespace OrderManagement.Api.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Components", (string)null);
+                    b.ToTable("Components");
 
                     b.HasData(
                         new

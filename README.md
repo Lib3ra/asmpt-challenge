@@ -116,14 +116,29 @@ dotnet ef migrations add <Name> --project src/OrderManagement.Api --output-dir D
 docker compose up --build -d
 ```
 
-Open http://localhost:8080. The same container serves the React app and the API.
+Open http://localhost:8080. The same container serves the React app and the API. It runs as the non-root
+user `app`.
 
-- The container runs as the non-root user `app`.
-- The SQLite database lives at `/data/app.db` in the named volume `order-manager_order-manager-data`. The
-  whole `/data` directory is persisted, including SQLite's `-wal` and `-shm` files.
-- Migrations are applied when the container starts. On first start the volume is empty, so the database
-  is created and filled with the five demo components; later starts reuse the existing database.
-- Logs: `docker compose logs -f app`.
+Logs: `docker compose logs -f app`.
+
+### How data is stored
+
+The SQLite database lives at `/data/app.db` inside the container. `/data` is a Docker **named volume**
+(`order-manager_order-manager-data`): storage managed by Docker (inside the Docker Desktop VM on macOS and
+Windows), not a folder in this repository. The whole directory is persisted, including SQLite's `-wal` and
+`-shm` files.
+
+- **Nothing local is copied.** `.dockerignore` excludes database files and `App_Data`, so the image only
+  contains an empty `/data` folder. The container database and the local development database
+  (`src/OrderManagement.Api/App_Data/app.db`) are independent; changes in one never appear in the other.
+- **First start.** The volume is new and empty. Docker fills it with the image's `/data` folder, including its
+  owner: the image creates `/data` owned by the non-root user `app` (uid 1654), so the app can write to the
+  volume. The app then creates `app.db` and applies all migrations, which also insert the five demo
+  components. The log shows `Applying 1 migration(s) to /data/app.db`.
+- **Later starts.** Restarting, recreating the container or starting a newer image mounts the same volume
+  again. The database already exists, so the log shows `Database /data/app.db is up to date`, or a newer
+  image applies only its new migrations to the existing data.
+- **Inspect the volume:** `docker volume inspect order-manager_order-manager-data`.
 
 Data and the volume:
 

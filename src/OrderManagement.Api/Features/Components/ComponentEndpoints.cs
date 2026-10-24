@@ -16,30 +16,31 @@ public static class ComponentEndpoints
         return app;
     }
 
-    private static async Task<Ok<List<ComponentResponse>>> GetAllAsync(IComponentRepository repository, CancellationToken ct)
+    private static async Task<Ok<List<ComponentResponse>>> GetAllAsync(
+        IComponentRepository componentRepository, CancellationToken cancellationToken)
     {
-        IReadOnlyList<Component> components = await repository.GetAllAsync(ct);
+        IReadOnlyList<Component> components = await componentRepository.GetAllAsync(cancellationToken);
         return TypedResults.Ok(components.Select(ComponentResponse.From).ToList());
     }
 
     private static async Task<Results<Ok<ComponentResponse>, NotFound>> GetByIdAsync(
-        int id, IComponentRepository repository, CancellationToken ct)
+        int id, IComponentRepository componentRepository, CancellationToken cancellationToken)
     {
-        Component? component = await repository.GetByIdAsync(id, ct);
+        Component? component = await componentRepository.GetByIdAsync(id, cancellationToken);
         return component is null ? TypedResults.NotFound() : TypedResults.Ok(ComponentResponse.From(component));
     }
 
     private static async Task<Created<ComponentResponse>> CreateAsync(
-        CreateComponentRequest request, IComponentRepository repository, CancellationToken ct)
+        CreateComponentRequest request, IComponentRepository componentRepository, CancellationToken cancellationToken)
     {
-        Component component = await repository.AddAsync(
+        Component component = await componentRepository.AddAsync(
             new Component
             {
                 Name = request.Name,
                 Description = request.Description ?? string.Empty,
                 Quantity = request.Quantity,
             },
-            ct);
+            cancellationToken);
         return TypedResults.Created($"{Route}/{component.Id}", ComponentResponse.From(component));
     }
 }
