@@ -1,35 +1,34 @@
-import { useEffect, useState } from 'react'
-import { fetchHealth } from './api/health'
-
-type ApiState =
-  | { kind: 'loading' }
-  | { kind: 'ok'; status: string }
-  | { kind: 'error'; message: string }
+import { Navigate, NavLink, Route, Routes } from 'react-router'
+import { ComponentsPage } from './features/components/ComponentsPage'
 
 function App() {
-  const [api, setApi] = useState<ApiState>({ kind: 'loading' })
-
-  useEffect(() => {
-    const controller = new AbortController()
-    fetchHealth(controller.signal)
-      .then((health) => setApi({ kind: 'ok', status: health.status }))
-      .catch((error: unknown) => {
-        if (controller.signal.aborted) return
-        setApi({ kind: 'error', message: error instanceof Error ? error.message : String(error) })
-      })
-    return () => controller.abort()
-  }, [])
-
   return (
-    <main>
-      <h1>Order Manager</h1>
-      <p className="status" data-state={api.kind}>
-        API status:{' '}
-        {api.kind === 'loading' && 'checking…'}
-        {api.kind === 'ok' && api.status}
-        {api.kind === 'error' && `unreachable (${api.message})`}
+    <>
+      <header className="app-header">
+        <span className="app-title">Order Manager</span>
+        <nav aria-label="Main">
+          <NavLink to="/components">Components</NavLink>
+        </nav>
+      </header>
+      <main>
+        <Routes>
+          <Route path="/" element={<Navigate to="/components" replace />} />
+          <Route path="/components" element={<ComponentsPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </main>
+    </>
+  )
+}
+
+function NotFoundPage() {
+  return (
+    <section className="page">
+      <h1>Page not found</h1>
+      <p className="muted">
+        <NavLink to="/components">Go to components</NavLink>
       </p>
-    </main>
+    </section>
   )
 }
 

@@ -21,9 +21,13 @@ how we write and ship code. Change it through a pull request like any other code
 
 ```
 src/OrderManagement.Api/          Minimal API; one folder per feature under Features/
+  Common/Validation/              Validation rules shared by all entities (EntityRules, ValidationErrors)
   Data/                           DbContext, startup migration, EF Core migrations (generated)
 tests/OrderManagement.Api.Tests/  NUnit tests, mirroring the Features/ structure
 frontend/                         React + TypeScript + Vite
+  src/api/                        HTTP calls and API types, one module per resource
+  src/features/<feature>/         Pages and feature-specific components
+  src/ui/                         Reusable UI pieces (field errors, delete selection)
 docs/                             Project handbook
 ```
 
@@ -54,6 +58,21 @@ No additional backend projects or architecture frameworks unless agreed.
   `Component.NameMaxLength`, so database mapping and validation share one value.
 - Rely on EF Core conventions (table names, keys) and configure only what deviates from them.
 - Descriptive names, no abbreviations: `componentRepository`, `cancellationToken` (not `repository`, `ct`).
+- Repository methods describe the domain action and do not mirror EF Core method names:
+  `CreateComponentsAsync`, `UpdateComponentAsync`, `DeleteComponentsAsync` (not `AddRangeAsync`, `UpdateAsync`).
+- Write numeric literals without digit separators (`10000`, not `10_000`).
+- Validation uses FluentValidation: one `AbstractValidator<T>` per request type (`ComponentRequestValidator`,
+  `CreateComponentsRequestValidator` for the bulk list), built from the shared rule extensions in
+  `Common/Validation` (`EntityName`, `EntityDescription`, `UniqueNames`). Validators are registered in DI and
+  injected into endpoints as `IValidator<T>`; they never access the database. Checks that need the database
+  (unique names, existence) run afterwards through the repository.
+- Validation errors are returned with `TypedResults.ValidationProblem(result.ToProblemErrors())`, keyed in JSON
+  casing: `name` for a single object, `components[1].quantity` for list items (`OverridePropertyName`).
+- Validator unit tests use FluentValidation's `TestValidate` / `ShouldHaveValidationErrorFor`.
+- Document every endpoint in code with `WithSummary` / `WithDescription` (rules, all-or-nothing behavior);
+  it ends up in the OpenAPI document and Swagger UI. The README does not list endpoints.
+- "One or more" endpoints: `POST` takes a JSON array, `DELETE` takes `?ids=`; both are all-or-nothing.
+- User-facing messages are culture-invariant (no server-locale number formatting).
 - Logging through `ILogger<T>` with message templates, not string interpolation:
   `logger.LogInformation("Created component {ComponentId}", id)`.
 - Apply SOLID and DRY pragmatically; introduce an abstraction only when it has a second use or makes
@@ -77,7 +96,11 @@ No additional backend projects or architecture frameworks unless agreed.
 - Function components and hooks only.
 - All HTTP calls live in `src/api/`; components never call `fetch` directly. API paths start with
   `/api` so the Vite dev proxy and the production host both work.
+- Keep the UI minimal: plain forms and tables, no extra widgets or styling beyond what a task needs.
+- Pages are routed with React Router (`/components`, later `/boards`, `/orders`); the header uses `NavLink`.
 - No UI library or global state manager until there is a concrete need.
+- Show server validation messages next to the field they belong to; never use `alert`/`confirm`, confirm
+  destructive actions in the page.
 
 ## Git and pull requests
 

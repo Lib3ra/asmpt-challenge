@@ -5,7 +5,7 @@ manufacturing environment. The task description is in [`ASMPT_Coding_Challenge_E
 decisions and the delivery plan are tracked in [`docs/project-handbook.html`](docs/project-handbook.html).
 Code style and working conventions are in [`CLAUDE.md`](CLAUDE.md).
 
-> Status: scaffold, SQLite persistence and Docker delivery (PR 2). Domain features follow in later pull requests.
+> Status: components are fully managed (PR 4). Boards, orders, global search and the production download follow.
 
 ## Tech stack
 
@@ -52,6 +52,8 @@ the source of truth for exact versions: `*.csproj` for the backend, `frontend/pa
 | Part     | Package                                              | Purpose                                     |
 | -------- | ---------------------------------------------------- | ------------------------------------------- |
 | Backend  | ASP.NET Core (shared framework)                      | Minimal API, health checks, logging, JSON   |
+| Backend  | Microsoft.AspNetCore.OpenApi, Swashbuckle.AspNetCore.SwaggerUI | OpenAPI document and Swagger UI    |
+| Backend  | FluentValidation, FluentValidation.DependencyInjectionExtensions | Request validation          |
 | Backend  | Microsoft.EntityFrameworkCore.Sqlite                 | SQLite persistence                          |
 | Backend  | Microsoft.EntityFrameworkCore.Design                 | Design-time support for migrations          |
 | Backend  | Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore | Database health check          |
@@ -60,6 +62,7 @@ the source of truth for exact versions: `*.csproj` for the backend, `frontend/pa
 | Tests    | Microsoft.AspNetCore.Mvc.Testing                     | Runs the API in memory for integration tests |
 | Tests    | Microsoft.NET.Test.Sdk, coverlet.collector           | `dotnet test` host and code coverage        |
 | Frontend | react, react-dom                                     | UI                                          |
+| Frontend | react-router                                         | Pages with their own URLs (`/components`)   |
 | Frontend | vite, @vitejs/plugin-react                           | Dev server with API proxy, production build |
 | Frontend | typescript                                           | Type checking                               |
 | Frontend | eslint, typescript-eslint, eslint-plugin-react-hooks, eslint-plugin-react-refresh | Linting |
@@ -88,7 +91,7 @@ cd frontend
 npm run dev
 ```
 
-Open http://localhost:5173. The page shows the API status reported by `GET /api/health`.
+Open http://localhost:5173.
 
 To point Vite at a different API address, set `API_URL`, for example `API_URL=http://localhost:5000 npm run dev`.
 
@@ -140,13 +143,19 @@ Windows), not a folder in this repository. The whole directory is persisted, inc
   image applies only its new migrations to the existing data.
 - **Inspect the volume:** `docker volume inspect order-manager_order-manager-data`.
 
-Data and the volume:
+### Common commands
 
-| Command                  | Containers | Data (volume) |
-| ------------------------ | ---------- | ------------- |
-| `docker compose restart` | restarted  | kept          |
-| `docker compose down`    | removed    | **kept**      |
-| `docker compose down -v` | removed    | **deleted**   |
+| Command                        | Rebuilds image from source | Container                     | Data (volume) |
+| ------------------------------ | -------------------------- | ----------------------------- | ------------- |
+| `docker compose restart`       | no                         | same container restarted      | kept          |
+| `docker compose up -d`         | only if no image exists    | recreated if config changed   | kept          |
+| `docker compose up --build -d` | **yes**                    | recreated if the image changed | kept         |
+| `docker compose down`          | no                         | removed                       | **kept**      |
+| `docker compose down -v`       | no                         | removed                       | **deleted**   |
+
+After changing code, run `docker compose up --build -d`; there is no need to remove anything first. New
+migrations are applied when the new container starts. Use `down -v` only to start over with an empty database
+(plus the demo components). For day-to-day development, `dotnet run` and `npm run dev` give faster feedback.
 
 The app is designed to run as a single instance.
 
@@ -209,13 +218,12 @@ CI runs on every pull request and every push to `main`:
    On `main` only, the image is tagged with the commit SHA, exported with `docker save`, gzip-compressed
    and uploaded as an artifact (kept for 30 days).
 
-## API
+## API documentation
 
-| Method | Route                  | Description                                                    |
-| ------ | ---------------------- | -------------------------------------------------------------- |
-| GET    | `/api/health`          | Health status including the database, e.g. `{"status":"Healthy"}` |
-| GET    | `/api/components`      | All components                                                 |
-| GET    | `/api/components/{id}` | One component, or 404                                          |
-| POST   | `/api/components`      | Create a component: `{"name":"...","description":"...","quantity":1}` |
+The API documents itself with OpenAPI, generated from the endpoint definitions:
 
-The component endpoints are a minimal persistence flow. Full CRUD, search and validation follow in PR 4 (Components).
+- Swagger UI: http://localhost:8080/swagger (Docker) or http://localhost:5080/swagger (`dotnet run`)
+- OpenAPI document: `/openapi/v1.json`
+
+Both are available in every environment, because the app has no authentication and the Docker demo runs in
+Production mode. All endpoints live under `/api`; errors use the problem details format (RFC 9457).

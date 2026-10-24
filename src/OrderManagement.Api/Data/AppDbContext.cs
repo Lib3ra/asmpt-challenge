@@ -18,8 +18,10 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
         modelBuilder.Entity<Component>(component =>
         {
             // SQLite stores all text as TEXT and does not enforce lengths. The limits document the model,
-            // carry over to other database providers, and are enforced by request validation (PR 4).
-            component.Property(c => c.Name).IsRequired().HasMaxLength(Component.NameMaxLength);
+            // carry over to other database providers, and are enforced by request validation (ComponentValidator).
+            // NOCASE makes comparisons and the unique index case-insensitive (for ASCII letters, as SQLite does).
+            component.Property(c => c.Name).IsRequired().HasMaxLength(Component.NameMaxLength).UseCollation("NOCASE");
+            component.HasIndex(c => c.Name).IsUnique();
             component.Property(c => c.Description).IsRequired().HasMaxLength(Component.DescriptionMaxLength);
             component.HasData(SeedData.Components);
         });

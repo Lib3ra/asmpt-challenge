@@ -93,7 +93,7 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
     <span class="eyebrow">ASMPT Coding Challenge · Project handbook</span>
     <h1>Order Manager Handbook</h1>
     <p class="lede">Alignment with the task description, agreed technical decisions, code conventions and the PR plan. This document is updated with every PR.</p>
-    <div class="meta"><span>Repo: Lib3ra/asmpt-challenge</span><span>As of: 2026-10-24</span><span>Current step: PR 3 (docs), next PR 4</span></div>
+    <div class="meta"><span>Repo: Lib3ra/asmpt-challenge</span><span>As of: 2026-10-24</span><span>Current step: PR 4 (Components)</span></div>
   </header>
 
   <section>
@@ -137,6 +137,7 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
         <li><span class="tag t-dev">Omitted</span><span><b>Cloud deployment</b> (part of the optional CI/CD requirement): no Azure, no Neon, no registry push. The pipeline ends with a downloadable image artifact.</span></li>
         <li><span class="tag t-dev">Omitted</span><span><b>Login and authentication</b> (part of the optional web interface requirement, “accessible via login”). The UI is reachable without signing in.</span></li>
         <li><span class="tag t-dev">Limited</span><span><b>“Runnable locally and in the cloud”</b>: the image is built to be cloud-ready (non-root, configuration via environment variables) but is only run and verified locally.</span></li>
+        <li><span class="tag t-dev">Limited</span><span><b>“One or more” when creating boards and orders</b>: only components can be created several at a time. Boards and orders are created one at a time, because each needs its own set of links. Deleting works in bulk for all three.</span></li>
         <li><span class="tag t-dev">Limited</span><span><b>“Build on each commit”</b>: CI runs on pull requests and pushes to <code>main</code>. Commits on feature branches are built through their open PR.</span></li>
       </ul>
     </div>
@@ -148,22 +149,22 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
       <h2>Domain rules</h2>
       <p class="lede">Decided together on 2026-10-24 before feature work (PR 3). Each rule names the PR that implements it.</p>
       <ul class="items">
-        <li><span class="tag t-ok">All</span><span><b>Validation</b>: Name required, trimmed, not blank, max 256 characters. Description optional, max 2000. Errors are returned as a standard 400 validation problem (field → messages) and shown next to the form fields.</span></li>
+        <li><span class="tag t-ok">All</span><span><b>Validation</b>: Name required, trimmed, not blank, max 256 characters. Description optional, trimmed, max 2000. Errors are returned as a standard 400 validation problem (field → messages) and shown next to the form fields.</span></li>
         <li><span class="tag t-ok">All</span><span><b>Unique names</b> per entity type, case-insensitive. A duplicate is rejected with a clear message. SQLite folds case for ASCII letters only, which is sufficient for technical names.</span></li>
-        <li><span class="tag t-ok">All</span><span><b>Bulk operations</b>: create and delete accept one or more records and run <b>all-or-nothing</b> in one transaction; on failure nothing is saved and every failing item is reported. Editing works on one record at a time. Search returns one or more results by nature.</span></li>
+        <li><span class="tag t-ok">All</span><span><b>Bulk operations</b>: delete accepts one or more records for all three entities; create accepts one or more records for components only (boards and orders are created one at a time with their links). Bulk operations take one or more records and run <b>all-or-nothing</b> in one transaction; on failure nothing is saved and every failing item is reported. Editing works on one record at a time. Search returns one or more results by nature.</span></li>
         <li><span class="tag t-ok">All</span><span><b>Search</b>: case-insensitive “contains” on Name. Each list page has its own name filter; a global search box returns matches grouped by Orders, Boards and Components and can be narrowed by type.</span></li>
         <li><span class="tag t-ok">PR 4</span><span><b>Quantity</b>: integer, 1 to 10,000 copies per board.</span></li>
         <li><span class="tag t-ok">PR 5</span><span><b>Length and Width</b>: millimetres as decimal with two places (0.01 mm), greater than 0 and at most 1,000 mm. Named <code>lengthMm</code> / <code>widthMm</code> in the API.</span></li>
         <li><span class="tag t-ok">PR 6</span><span><b>Order Date</b>: date only (<code>2026-10-24</code>), prefilled with today, editable.</span></li>
-        <li><span class="tag t-ok">PR 5 / 6</span><span><b>At least one link, enforced on every save</b>: a board always has at least one component, an order at least one board. They are created together with their links (also in bulk create), and removing the last link is rejected.</span></li>
-        <li><span class="tag t-ok">PR 5 / 6</span><span><b>Delete while in use is blocked</b>: a component used on a board, or a board used in an order, cannot be deleted; the message names where it is used. Orders can always be deleted, which removes their board links.</span></li>
+        <li><span class="tag t-ok">PR 5 / 6</span><span><b>At least one link, enforced on every save</b>: a board always has at least one component, an order at least one board. They are created together with their links, and removing the last link is rejected.</span></li>
+        <li><span class="tag t-ok">PR 5 / 6</span><span><b>Delete while in use is blocked</b>: a component used on a board, or a board used in an order, cannot be deleted; the API answers <b>409 Conflict</b> with a message naming where it is used. In a bulk delete, one blocked record blocks the whole request. Orders can always be deleted, which removes their board links.</span></li>
         <li><span class="tag t-ok">PR 8</span><span><b>Production download</b>: nested JSON <code>order → boards → components</code> plus <code>exportedAt</code> (UTC timestamp of the hand-over); file name <code>order-&lt;id&gt;-&lt;name&gt;.json</code> with a sanitized, lower-case name. A pure export: logged, no status change, the order stays editable.</span></li>
         <li><span class="tag t-ok">Tech</span><span><b>CancellationToken</b> stays in endpoints and repositories.</span></li>
       </ul>
       <div class="note">
         <h3>Notes on our brief compared with the challenge</h3>
         <p><b>Quantity</b>: the challenge puts Quantity on Component without defining its meaning. “Copies of this component per board” is our interpretation. As required, Quantity stays on Component even when the same component sits on several boards. We should state this interpretation explicitly in the presentation.</p>
-        <p><b>“One or more”</b> applies to all four actions. Our reading: creating and removing several records at once are real use cases (entering a component list, cleaning up), so both get bulk operations. “Editing one or more” is covered by editing records individually; a mass edit would apply the same value to many records, which has no clear use in this domain. “Searching” returns one or more results by nature. If asked, this is our argument.</p>
+        <p><b>“One or more”</b> applies to all four actions. Our reading: creating and removing several records at once are real use cases (entering a component list, cleaning up), so both get bulk operations. Bulk delete exists for all three entities; bulk create only for components, which are entered in lists, while boards and orders are created one at a time with their links (decided 2026-10-24, a deliberate narrowing of “one or more” for creating boards and orders). “Editing one or more” is covered by editing records individually; a mass edit would apply the same value to many records, which has no clear use in this domain. “Searching” returns one or more results by nature. If asked, this is our argument.</p>
         <p>Otherwise our brief neither contradicts the challenge nor misses a mandatory requirement.</p>
       </div>
     </div>
@@ -189,6 +190,10 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
             <tr><td>Health</td><td>ASP.NET Core health checks at <code>/api/health</code> with a JSON response, including an EF Core database check</td><td><span class="tag t-opt">Proposed</span></td></tr>
             <tr><td>Local DB</td><td>Development database at <code>src/OrderManagement.Api/App_Data/app.db</code> (git-ignored); relative paths are resolved against the API project folder</td><td><span class="tag t-opt">Proposed</span></td></tr>
             <tr><td>CI smoke test</td><td>The Docker job starts the built image and checks <code>/api/health</code> before exporting it (optional addition)</td><td><span class="tag t-opt">Proposed</span></td></tr>
+            <tr><td>API shape</td><td>“One or more” as <code>POST</code> with a JSON array and <code>DELETE ?ids=</code>; <code>PUT</code> per record. All-or-nothing in one transaction.</td><td><span class="tag t-opt">Proposed</span></td></tr>
+            <tr><td>Errors</td><td>Problem details (RFC 9457); validation errors per field in JSON casing (<code>name</code>, <code>components[1].quantity</code>). Unhandled exceptions are logged and answered with 500.</td><td><span class="tag t-opt">Proposed</span></td></tr>
+            <tr><td>Validation</td><td>FluentValidation 12.1: one validator per request type, shared rule extensions (<code>EntityName</code>, <code>EntityDescription</code>, <code>UniqueNames</code>), injected as <code>IValidator&lt;T&gt;</code>, no database access. Uniqueness is checked through the repository afterwards and guarded by a unique NOCASE index.</td><td><span class="tag t-ok">Decided</span></td></tr>
+            <tr><td>API docs</td><td>OpenAPI document generated by ASP.NET Core (<code>/openapi/v1.json</code>) and Swagger UI (<code>/swagger</code>), available in every environment. Endpoints are described in code; the README does not list them.</td><td><span class="tag t-ok">Decided</span></td></tr>
             <tr><td>Node</td><td>Node 24 LTS in CI and the Docker build; <code>package-lock.json</code> committed</td><td><span class="tag t-opt">Proposed</span></td></tr>
           </tbody>
         </table>
@@ -243,10 +248,10 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
       <ol class="prs">
         <li><div class="pr-head"><span class="pr-num">PR 1</span><h3>Scaffold and first CI</h3><span class="tag t-ok">Merged</span></div><p class="pr-text">Minimal API with health endpoint, NUnit project with an integration test, React page showing the API status, .gitignore, .dockerignore, README, CLAUDE.md, CI for backend and frontend.</p></li>
         <li><div class="pr-head"><span class="pr-num">PR 2</span><h3>Docker, SQLite and artifact</h3><span class="tag t-ok">Merged</span></div><p class="pr-text">Multi-stage Dockerfile, non-root, Compose with volume, EF Core with first migration and seeds, repository for components, image artifact on main.</p></li>
-        <li class="active"><div class="pr-head"><span class="pr-num">PR 3</span><h3>Domain decisions (docs only)</h3><span class="tag t-open">In review</span></div><p class="pr-text">Agreed domain rules, updated PR plan and decision log. No code changes.</p></li>
-        <li><div class="pr-head"><span class="pr-num">PR 4</span><h3>Components</h3></div><p class="pr-text">CRUD in API and UI, validation, unique names, name filter, bulk create and bulk delete (all-or-nothing).</p></li>
-        <li><div class="pr-head"><span class="pr-num">PR 5</span><h3>Boards</h3></div><p class="pr-text">CRUD with at least one component per board, dimensions in mm, name filter, bulk create/delete, delete blocking for components in use.</p></li>
-        <li><div class="pr-head"><span class="pr-num">PR 6</span><h3>Orders</h3></div><p class="pr-text">CRUD with at least one board per order, order date, name filter, bulk create/delete, delete blocking for boards in use.</p></li>
+        <li><div class="pr-head"><span class="pr-num">PR 3</span><h3>Domain decisions (docs only)</h3><span class="tag t-ok">Merged</span></div><p class="pr-text">Agreed domain rules, updated PR plan and decision log. No code changes.</p></li>
+        <li class="active"><div class="pr-head"><span class="pr-num">PR 4</span><h3>Components</h3><span class="tag t-open">In review</span></div><p class="pr-text">CRUD in API and UI, validation, unique names, name filter, bulk create and bulk delete (all-or-nothing).</p></li>
+        <li><div class="pr-head"><span class="pr-num">PR 5</span><h3>Boards</h3></div><p class="pr-text">CRUD with at least one component per board, dimensions in mm, name filter, bulk delete, 409 when deleting components in use. Boards are created one at a time.</p></li>
+        <li><div class="pr-head"><span class="pr-num">PR 6</span><h3>Orders</h3></div><p class="pr-text">CRUD with at least one board per order, order date, name filter, bulk delete, 409 when deleting boards in use. Orders are created one at a time.</p></li>
         <li><div class="pr-head"><span class="pr-num">PR 7</span><h3>Global search</h3></div><p class="pr-text">One search box across orders, boards and components with results grouped by type and a type filter.</p></li>
         <li><div class="pr-head"><span class="pr-num">PR 8</span><h3>Production download</h3></div><p class="pr-text">Nested JSON download of an order with its boards and components, download button in the UI, logging and tests.</p></li>
         <li><div class="pr-head"><span class="pr-num">PR 9</span><h3>Wrap-up</h3></div><p class="pr-text">Final alignment check, end-to-end verification, start from a fresh checkout and from the CI artifact, class and architecture outline.</p></li>
@@ -276,6 +281,12 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
             <tr><td>2026-10-24</td><td>Component Name max 256 and Description max 2000 characters. SQLite does not enforce lengths, so request validation in PR 4 must. No extra index on Id (INTEGER PRIMARY KEY is the rowid).</td><td>#2</td></tr>
             <tr><td>2026-10-24</td><td>Repositories are scoped like the DbContext; Minimal API handlers are static. CancellationToken is passed through.</td><td>#2</td></tr>
             <tr><td>2026-10-24</td><td>Domain rules decided before feature work (see “Domain rules”): validation, unique names, all-or-nothing bulk create/delete without mass edit, name search with global search, Quantity 1–10,000, dimensions in mm (0.01), date-only order date, at least one link on every save, delete blocked while in use, nested production JSON without status change, CancellationToken kept.</td><td>#3</td></tr>
+            <tr><td>2026-10-24</td><td>API documentation through OpenAPI and Swagger UI instead of an endpoint table in the README.</td><td>#4</td></tr>
+            <tr><td>2026-10-24</td><td>React Router 8.4 for page navigation (<code>/components</code>, later <code>/boards</code>, <code>/orders</code>), added in PR 4. The UI stays as minimal as possible.</td><td>#4</td></tr>
+            <tr><td>2026-10-24</td><td>Bulk create only for components; boards and orders are created one at a time. Bulk delete for all three entities, all-or-nothing and blocked while in use. Blocked deletes answer 409 Conflict. No seeded boards or orders.</td><td>#4</td></tr>
+            <tr><td>2026-10-24</td><td>Validation with FluentValidation instead of hand-written validators: widely known and easy to reason about in the presentation. Version 12.1.1 rather than the two-week-old 12.2.0.</td><td>#4</td></tr>
+            <tr><td>2026-10-24</td><td>Description is trimmed like Name before validation and storage (from review).</td><td>#4</td></tr>
+            <tr><td>2026-10-24</td><td>No localization: messages and number formats are English and culture-invariant, independent of server and user locale. Formatting in the user's locale would be a separate feature and is out of scope for now.</td><td>#4</td></tr>
             <tr><td>2026-10-24</td><td>No <code>formatVersion</code> in the production download: nothing consumes the file and there is no second format, so a version field has no current purpose. Can be added if a real consumer appears.</td><td>#3</td></tr>
             <tr><td>2026-10-24</td><td>PR plan extended and renumbered to match GitHub: this docs PR is #3, followed by Components #4, Boards #5, Orders #6, global search #7 (new, own PR), production download #8, wrap-up #9.</td><td>#3</td></tr>
           </tbody>
