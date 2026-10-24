@@ -7,9 +7,10 @@ how we write and ship code. Change it through a pull request like any other code
 ## Scope rules
 
 - The challenge is in `ASMPT_Coding_Challenge_EN.pdf`. Do not invent binding requirements beyond it.
-- Undecided domain rules (delete behavior with existing links, validation limits, required fields,
-  bulk operation semantics, search fields) are decided with the project owner per feature and then
-  recorded in the handbook's decision log. Do not settle them silently in code.
+- Domain rules (validation, unique names, bulk operations, search, link minimums, delete behavior,
+  download format) are decided and listed under "Domain rules" in the handbook. Implement them as
+  written. Anything not covered there is decided with the project owner first and then added to the
+  handbook's decision log. Do not settle new rules silently in code.
 - `Component.Quantity` stays on `Component` (copies of the component per board). No quantity on the
   board–component link, no stock management, no calculation from board dimensions.
 - Out of scope: cloud deployment, authentication.

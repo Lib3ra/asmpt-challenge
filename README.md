@@ -218,4 +218,4 @@ CI runs on every pull request and every push to `main`:
 | GET    | `/api/components/{id}` | One component, or 404                                          |
 | POST   | `/api/components`      | Create a component: `{"name":"...","description":"...","quantity":1}` |
 
-The component endpoints are a minimal persistence flow. Full CRUD, search and validation follow in PR 3.
+The component endpoints are a minimal persistence flow. Full CRUD, search and validation follow in PR 4 (Components).
