@@ -28,5 +28,5 @@ public sealed record BoardResponse(
 {
     public static BoardResponse From(Board board) =>
         new(board.Id, board.Name, board.Description, board.LengthMm, board.WidthMm,
-            board.Components.OrderBy(c => c.Name).Select(ComponentResponse.From).ToList());
+            board.Components.OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase).Select(ComponentResponse.From).ToList());
 }

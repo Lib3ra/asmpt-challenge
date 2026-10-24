@@ -139,7 +139,7 @@ public static class BoardEndpoints
         Dictionary<string, string[]> errors = [];
         if (await boardRepository.NameExistsAsync(request.NormalizedName, excludeId, cancellationToken))
         {
-            errors["name"] = [$"A {EntityName} named '{request.NormalizedName}' already exists."];
+            errors["name"] = [NameConflicts.Message(EntityName, request.NormalizedName)];
         }
 
         IReadOnlyList<int> missingComponentIds = await componentRepository.FindMissingComponentIdsAsync(

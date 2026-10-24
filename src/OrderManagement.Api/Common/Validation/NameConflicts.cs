@@ -12,5 +12,8 @@ public static class NameConflicts
             .Where(candidate => existingNames.Contains(candidate.Name))
             .ToDictionary(
                 candidate => candidate.Field,
-                candidate => new[] { $"A {entityName} named '{candidate.Name}' already exists." });
+                candidate => new[] { Message(entityName, candidate.Name) });
+
+    /// <summary>e.g. "A board named 'Controller board' already exists."</summary>
+    public static string Message(string entityName, string name) => $"A {entityName} named '{name}' already exists.";
 }

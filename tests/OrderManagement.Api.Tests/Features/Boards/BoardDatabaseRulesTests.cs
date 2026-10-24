@@ -34,7 +34,7 @@ public sealed class BoardDatabaseRulesTests
     }
 
     [Test]
-    public async Task DeletingLinkedComponentDirectly_IsRejectedByForeignKey()
+    public async Task DeleteComponentInDatabase_WhenComponentIsOnBoard_ThrowsForeignKeyError()
     {
         // Arrange
         await _client.CreateBoardAsync("Controller board", 3);
@@ -49,7 +49,7 @@ public sealed class BoardDatabaseRulesTests
     }
 
     [Test]
-    public async Task DeletingBoard_RemovesItsComponentLinks()
+    public async Task DeleteBoardInDatabase_WithComponents_RemovesItsComponentLinks()
     {
         // Arrange
         await _client.CreateBoardAsync("Controller board", 1, 3);

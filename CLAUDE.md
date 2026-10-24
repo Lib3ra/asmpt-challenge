@@ -95,8 +95,8 @@ No additional backend projects or architecture frameworks unless agreed.
 - Structure every test with `// Arrange`, `// Act`, `// Assert` comments. Omit `// Arrange` only when
   there is nothing to set up.
 - Group related assertions with `using (Assert.EnterMultipleScope())` so all failures are reported.
-- API integration tests use `WebApplicationFactory<Program>`, created once per fixture in
-  `[OneTimeSetUp]` and disposed in `[OneTimeTearDown]`.
+- API integration tests use `WebApplicationFactory<Program>` (`SqliteApiFactory`), created per test in
+  `[SetUp]` and disposed in `[TearDown]`, so every test starts from its own freshly migrated database.
 - Persistence tests use an isolated SQLite database per test or fixture, never the developer database.
 - Test relevant behavior only; no tests that exist to raise the test count.
 

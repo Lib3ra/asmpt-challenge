@@ -147,6 +147,6 @@ public static class ComponentEndpoints
     private static string DescribeUsages(IEnumerable<ComponentUsage> usages) =>
         string.Join("; ", usages
             .GroupBy(usage => usage.ComponentName)
-            .OrderBy(group => group.Key)
-            .Select(group => $"'{group.Key}' on {string.Join(", ", group.Select(usage => usage.BoardName).Order())}"));
+            .OrderBy(group => group.Key, StringComparer.OrdinalIgnoreCase)
+            .Select(group => $"'{group.Key}' on {string.Join(", ", group.Select(usage => usage.BoardName).Order(StringComparer.OrdinalIgnoreCase))}"));
 }
