@@ -50,7 +50,7 @@ export function ComponentCreateForm({ onCreated }: ComponentCreateFormProps) {
       <h2>Add components</h2>
       <div className="draft-rows">
         {drafts.map((draft, index) => {
-          const errorsFor = (field: string) => fieldErrors[`[${index}].${field}`]
+          const errorsFor = (field: string) => fieldErrors[`components[${index}].${field}`]
           return (
             // Rows have no stable id before they are saved; the index is the row position in the request.
             <fieldset className="draft-row" key={index} aria-label={`Component ${index + 1}`}>
@@ -98,7 +98,7 @@ export function ComponentCreateForm({ onCreated }: ComponentCreateFormProps) {
           )
         })}
       </div>
-      <FieldError messages={fieldErrors['']} />
+      <FieldError messages={fieldErrors.components} />
       {formError && <p className="form-error">{formError}</p>}
       <div className="actions">
         <button type="button" className="secondary" onClick={() => setDrafts((current) => [...current, emptyDraft])}>

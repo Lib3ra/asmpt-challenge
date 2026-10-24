@@ -1,3 +1,4 @@
+using FluentValidation;
 using OrderManagement.Api.Data;
 using OrderManagement.Api.Features.Components;
 using OrderManagement.Api.Features.Health;
@@ -6,6 +7,9 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDatabase(builder.Configuration, builder.Environment);
 builder.Services.AddScoped<IComponentRepository, ComponentRepository>();
+
+// Registers every FluentValidation validator in this assembly. Validators are stateless, so one instance is shared.
+builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
 builder.Services.AddHealthChecks().AddDbContextCheck<AppDbContext>();
 
 // Error responses (404, 500, ...) use the RFC 9457 problem details format.

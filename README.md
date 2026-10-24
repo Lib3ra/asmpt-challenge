@@ -53,6 +53,7 @@ the source of truth for exact versions: `*.csproj` for the backend, `frontend/pa
 | -------- | ---------------------------------------------------- | ------------------------------------------- |
 | Backend  | ASP.NET Core (shared framework)                      | Minimal API, health checks, logging, JSON   |
 | Backend  | Microsoft.AspNetCore.OpenApi, Swashbuckle.AspNetCore.SwaggerUI | OpenAPI document and Swagger UI    |
+| Backend  | FluentValidation, FluentValidation.DependencyInjectionExtensions | Request validation          |
 | Backend  | Microsoft.EntityFrameworkCore.Sqlite                 | SQLite persistence                          |
 | Backend  | Microsoft.EntityFrameworkCore.Design                 | Design-time support for migrations          |
 | Backend  | Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore | Database health check          |

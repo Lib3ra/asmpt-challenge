@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using OrderManagement.Api.Common.Validation;
@@ -19,7 +21,7 @@ public static class ComponentEndpoints
         group.MapPost("/", CreateAsync)
             .WithSummary("Create one or more components")
             .WithDescription("Takes a JSON array. All-or-nothing: if any item is invalid, nothing is stored and the "
-                + "errors are keyed by item, e.g. '[1].quantity'. Name: required, max 256, unique ignoring case. "
+                + "errors are keyed by item, e.g. 'components[1].quantity'. Name: required, max 256, unique ignoring case. "
                 + "Description: optional, trimmed, max 2000. Quantity: 1 to 10,000 copies per board.");
         group.MapPut("/{id:int}", UpdateAsync)
             .WithSummary("Update one component")
@@ -46,26 +48,31 @@ public static class ComponentEndpoints
 
     /// <summary>Creates one or more components. All-or-nothing: if any item is invalid, nothing is stored.</summary>
     private static async Task<Results<Created<List<ComponentResponse>>, ValidationProblem>> CreateAsync(
-        List<ComponentRequest> requests, IComponentRepository componentRepository, CancellationToken cancellationToken)
+        List<ComponentRequest> requests,
+        IValidator<List<ComponentRequest>> createComponentsValidator,
+        IComponentRepository componentRepository,
+        CancellationToken cancellationToken)
     {
         // Step 1: rules that need no database. Invalid requests stop here without a database query.
-        ValidationErrors errors = ComponentValidator.ValidateAll(requests);
-        if (errors.HasErrors)
+        ValidationResult validation = await createComponentsValidator.ValidateAsync(requests, cancellationToken);
+        if (!validation.IsValid)
         {
-            return TypedResults.ValidationProblem(errors.ToDictionary());
+            return TypedResults.ValidationProblem(validation.ToProblemErrors());
         }
 
         // Step 2: names must not belong to stored components.
         IReadOnlySet<string> existingNames = await componentRepository.FindExistingNamesAsync(
             requests.Select(request => request.NormalizedName).ToList(), excludeId: null, cancellationToken);
+        Dictionary<string, string[]> nameErrors = [];
         for (int index = 0; index < requests.Count; index++)
         {
-            AddErrorIfNameExists(requests[index].NormalizedName, existingNames, $"[{index}].{EntityRules.NameField}", errors);
+            AddErrorIfNameExists(requests[index].NormalizedName, existingNames,
+                $"{CreateComponentsRequestValidator.ListName}[{index}].name", nameErrors);
         }
 
-        if (errors.HasErrors)
+        if (nameErrors.Count > 0)
         {
-            return TypedResults.ValidationProblem(errors.ToDictionary());
+            return TypedResults.ValidationProblem(nameErrors);
         }
 
         List<Component> components = requests.Select(request => request.ToComponent()).ToList();
@@ -74,7 +81,11 @@ public static class ComponentEndpoints
     }
 
     private static async Task<Results<Ok<ComponentResponse>, NotFound, ValidationProblem>> UpdateAsync(
-        int id, ComponentRequest request, IComponentRepository componentRepository, CancellationToken cancellationToken)
+        int id,
+        ComponentRequest request,
+        IValidator<ComponentRequest> componentValidator,
+        IComponentRepository componentRepository,
+        CancellationToken cancellationToken)
     {
         if (await componentRepository.GetComponentByIdAsync(id, cancellationToken) is null)
         {
@@ -82,19 +93,20 @@ public static class ComponentEndpoints
         }
 
         // Step 1: rules that need no database. Invalid requests stop here without a database query.
-        ValidationErrors errors = ComponentValidator.Validate(request);
-        if (errors.HasErrors)
+        ValidationResult validation = await componentValidator.ValidateAsync(request, cancellationToken);
+        if (!validation.IsValid)
         {
-            return TypedResults.ValidationProblem(errors.ToDictionary());
+            return TypedResults.ValidationProblem(validation.ToProblemErrors());
         }
 
         // Step 2: the name must not belong to another stored component.
         IReadOnlySet<string> existingNames = await componentRepository.FindExistingNamesAsync(
             [request.NormalizedName], excludeId: id, cancellationToken);
-        AddErrorIfNameExists(request.NormalizedName, existingNames, EntityRules.NameField, errors);
-        if (errors.HasErrors)
+        Dictionary<string, string[]> nameErrors = [];
+        AddErrorIfNameExists(request.NormalizedName, existingNames, "name", nameErrors);
+        if (nameErrors.Count > 0)
         {
-            return TypedResults.ValidationProblem(errors.ToDictionary());
+            return TypedResults.ValidationProblem(nameErrors);
         }
 
         Component component = request.ToComponent(id);
@@ -127,11 +139,11 @@ public static class ComponentEndpoints
     }
 
     private static void AddErrorIfNameExists(
-        string name, IReadOnlySet<string> existingNames, string field, ValidationErrors errors)
+        string name, IReadOnlySet<string> existingNames, string field, Dictionary<string, string[]> errors)
     {
         if (existingNames.Contains(name))
         {
-            errors.Add(field, $"A component named '{name}' already exists.");
+            errors[field] = [$"A component named '{name}' already exists."];
         }
     }
 }

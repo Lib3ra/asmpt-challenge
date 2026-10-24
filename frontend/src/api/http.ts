@@ -1,4 +1,4 @@
-/** Field errors as returned by ASP.NET Core validation problems, e.g. { "[1].name": ["Name is required."] }. */
+/** Field errors as returned by ASP.NET Core validation problems, e.g. { "components[1].name": ["Name is required."] }. */
 export type FieldErrors = Record<string, string[]>
 
 /** An error response from the API, with the problem details message and any field errors. */

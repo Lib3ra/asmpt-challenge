@@ -89,7 +89,7 @@ public sealed class ComponentEndpointTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-            Assert.That(problem!.Errors.Keys, Is.EquivalentTo(new[] { "[1].quantity" }));
+            Assert.That(problem!.Errors.Keys, Is.EquivalentTo(new[] { "components[1].quantity" }));
             Assert.That(stored, Is.Empty);
         }
     }
@@ -108,7 +108,7 @@ public sealed class ComponentEndpointTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-            Assert.That(problem!.Errors["[0].name"], Is.EqualTo(new[] { "A component named 'led GREEN' already exists." }));
+            Assert.That(problem!.Errors["components[0].name"], Is.EqualTo(new[] { "A component named 'led GREEN' already exists." }));
         }
     }
 

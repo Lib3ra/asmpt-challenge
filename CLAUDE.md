@@ -61,9 +61,14 @@ No additional backend projects or architecture frameworks unless agreed.
 - Repository methods describe the domain action and do not mirror EF Core method names:
   `CreateComponentsAsync`, `UpdateComponentAsync`, `DeleteComponentsAsync` (not `AddRangeAsync`, `UpdateAsync`).
 - Write numeric literals without digit separators (`10000`, not `10_000`).
-- Validation without database access lives in a static `<Entity>Validator` built on `Common/Validation`;
-  checks that need the database (unique names, existence) go through the repository. Validation errors are
-  returned with `TypedResults.ValidationProblem`, keyed like the JSON request (`name`, `[1].quantity`).
+- Validation uses FluentValidation: one `AbstractValidator<T>` per request type (`ComponentRequestValidator`,
+  `CreateComponentsRequestValidator` for the bulk list), built from the shared rule extensions in
+  `Common/Validation` (`EntityName`, `EntityDescription`, `UniqueNames`). Validators are registered in DI and
+  injected into endpoints as `IValidator<T>`; they never access the database. Checks that need the database
+  (unique names, existence) run afterwards through the repository.
+- Validation errors are returned with `TypedResults.ValidationProblem(result.ToProblemErrors())`, keyed in JSON
+  casing: `name` for a single object, `components[1].quantity` for list items (`OverridePropertyName`).
+- Validator unit tests use FluentValidation's `TestValidate` / `ShouldHaveValidationErrorFor`.
 - Document every endpoint in code with `WithSummary` / `WithDescription` (rules, all-or-nothing behavior);
   it ends up in the OpenAPI document and Swagger UI. The README does not list endpoints.
 - "One or more" endpoints: `POST` takes a JSON array, `DELETE` takes `?ids=`; both are all-or-nothing.
