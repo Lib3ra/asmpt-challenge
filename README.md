@@ -26,13 +26,46 @@ docs/                             Project handbook (decisions, conventions, plan
 
 ## Prerequisites
 
-- .NET SDK 10.0 (see `global.json`)
-- Node.js 24 LTS or newer with npm
+Tools you install yourself:
+
+| Tool       | Version                   | Check with         |
+| ---------- | ------------------------- | ------------------ |
+| .NET SDK   | 10.0 (see `global.json`)  | `dotnet --version` |
+| Node.js    | 24 LTS or newer           | `node --version`   |
+| npm        | ships with Node.js        | `npm --version`    |
+
+Docker is not needed yet. It becomes an alternative way to run the app in PR 2.
+
+## Dependencies
+
+All other dependencies are restored automatically (NuGet and npm). The project files are the source
+of truth for exact versions: `*.csproj` for the backend, `frontend/package.json` and
+`frontend/package-lock.json` for the frontend.
+
+| Part     | Package                                              | Purpose                                     |
+| -------- | ---------------------------------------------------- | ------------------------------------------- |
+| Backend  | ASP.NET Core (shared framework, no extra packages)   | Minimal API, health checks, logging, JSON   |
+| Tests    | NUnit, NUnit3TestAdapter, NUnit.Analyzers            | Test framework, runner and analyzers        |
+| Tests    | Microsoft.AspNetCore.Mvc.Testing                     | Runs the API in memory for integration tests |
+| Tests    | Microsoft.NET.Test.Sdk, coverlet.collector           | `dotnet test` host and code coverage        |
+| Frontend | react, react-dom                                     | UI                                          |
+| Frontend | vite, @vitejs/plugin-react                           | Dev server with API proxy, production build |
+| Frontend | typescript                                           | Type checking                               |
+| Frontend | eslint, typescript-eslint, eslint-plugin-react-hooks, eslint-plugin-react-refresh | Linting |
 
 ## Run locally (development)
 
 The API and the Vite dev server run as separate processes. Vite forwards every request under `/api`
 to the API, so the browser only talks to `http://localhost:5173`.
+
+First-time setup, from the repository root:
+
+```sh
+dotnet restore AsmptChallenge.slnx
+npm ci --prefix frontend
+```
+
+Start both parts in two terminals:
 
 ```sh
 # Terminal 1: API on http://localhost:5080
@@ -40,7 +73,6 @@ dotnet run --project src/OrderManagement.Api
 
 # Terminal 2: frontend on http://localhost:5173
 cd frontend
-npm ci
 npm run dev
 ```
 
