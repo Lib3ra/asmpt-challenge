@@ -267,6 +267,8 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
             <tr><td>2026-10-24</td><td>Provisional Component schema for the persistence flow: Name (text, not null), Description (text, defaults to empty), Quantity (integer). No validation yet; rules are decided in PR 3.</td><td>#2</td></tr>
             <tr><td>2026-10-24</td><td>Repository classes separate data access from the endpoints; entity configuration is central in <code>AppDbContext</code>; explicit types instead of <code>var</code> everywhere.</td><td>#2</td></tr>
             <tr><td>2026-10-24</td><td>Five demo components are seeded through an EF Core migration (<code>HasData</code>) for presentations. Seeds are inserted once; deleted presets are not restored.</td><td>#2</td></tr>
+            <tr><td>2026-10-24</td><td>Component Name max 256 and Description max 2000 characters. SQLite does not enforce lengths, so request validation in PR 3 must. No extra index on Id (INTEGER PRIMARY KEY is the rowid).</td><td>#2</td></tr>
+            <tr><td>2026-10-24</td><td>Repositories are scoped like the DbContext; Minimal API handlers are static. CancellationToken is passed through (open: may be removed if leaner signatures are preferred).</td><td>#2</td></tr>
           </tbody>
         </table>
       </div>
