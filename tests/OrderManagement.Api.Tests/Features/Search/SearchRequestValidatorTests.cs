@@ -46,11 +46,13 @@ public sealed class SearchRequestValidatorTests
         result.ShouldNotHaveAnyValidationErrors();
     }
 
-    [Test]
-    public void Validate_WithUnknownType_ReportsAllowedTypes()
+    [TestCase("machines")]
+    [TestCase("7")]
+    [TestCase("orders,boards")]
+    public void Validate_WithUnknownType_ReportsAllowedTypes(string type)
     {
         // Act
-        TestValidationResult<SearchRequest> result = _validator.TestValidate(new SearchRequest("led", "machines"));
+        TestValidationResult<SearchRequest> result = _validator.TestValidate(new SearchRequest("led", type));
 
         // Assert
         result.ShouldHaveValidationErrorFor(request => request.Type).WithErrorMessage("Type must be orders, boards or components.").Only();

@@ -5,7 +5,8 @@ manufacturing environment. The task description is in [`ASMPT_Coding_Challenge_E
 decisions and the delivery plan are tracked in [`docs/project-handbook.html`](docs/project-handbook.html).
 Code style and working conventions are in [`CLAUDE.md`](CLAUDE.md).
 
-> Status: components, boards and orders are managed, searchable across types, and orders can be downloaded for production (PR 9). Wrap-up follows.
+> Status: complete. Components, boards and orders are managed with their links, searchable across types, and orders can be downloaded
+> for production. The class and architecture outline is in [`docs/architecture.md`](docs/architecture.md).
 
 ## Tech stack
 
@@ -22,11 +23,12 @@ Code style and working conventions are in [`CLAUDE.md`](CLAUDE.md).
 
 ```
 src/OrderManagement.Api/          ASP.NET Core Minimal API
-  Data/                           DbContext, startup migration, EF Core migrations
-  Features/                       One folder per feature (endpoints, DTOs, entities)
+  Common/                         Shared validation rules and error responses
+  Data/                           DbContext, startup migration, EF Core migrations, seed data
+  Features/                       One folder per feature (entity, DTOs, validator, repository, endpoints)
 tests/OrderManagement.Api.Tests/  NUnit tests (unit and integration)
 frontend/                         React + TypeScript + Vite app
-docs/                             Project handbook (decisions, plan)
+docs/                             Architecture outline, project handbook (decisions, plan)
 Dockerfile, compose.yaml          Container build and local deployment
 ```
 
@@ -137,7 +139,7 @@ Windows), not a folder in this repository. The whole directory is persisted, inc
 - **First start.** The volume is new and empty. Docker fills it with the image's `/data` folder, including its
   owner: the image creates `/data` owned by the non-root user `app` (uid 1654), so the app can write to the
   volume. The app then creates `app.db` and applies all migrations, which also insert the five demo
-  components. The log shows `Applying 1 migration(s) to /data/app.db`.
+  components. The log shows `Applying 4 migration(s) to /data/app.db` followed by the migration names.
 - **Later starts.** Restarting, recreating the container or starting a newer image mounts the same volume
   again. The database already exists, so the log shows `Database /data/app.db is up to date`, or a newer
   image applies only its new migrations to the existing data.
@@ -207,12 +209,12 @@ npm run typecheck
 npm run build
 ```
 
-Integration tests run the API in memory against a temporary SQLite file per test fixture. They never
+Integration tests run the API in memory against a temporary SQLite file per test. They never
 touch `App_Data/app.db`.
 
 CI runs on every pull request and every push to `main`:
 
-1. Backend: restore, build, test.
+1. Backend: restore, build, check formatting, test.
 2. Frontend: `npm ci`, lint, typecheck, build.
 3. Docker: build the image and smoke-test `/api/health` in a running container.
    On `main` only, the image is tagged with the commit SHA, exported with `docker save`, gzip-compressed

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using OrderManagement.Api.Data;
 using OrderManagement.Api.Features.Components;
@@ -100,6 +101,26 @@ public sealed class ComponentEndpointTests
         {
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             Assert.That(problem!.Errors.Keys, Is.EquivalentTo(new[] { "components[1].quantity" }));
+            Assert.That(stored, Is.Empty);
+        }
+    }
+
+    [Test]
+    public async Task Create_WithNullItem_StoresNothingAndReportsTheItem()
+    {
+        // Arrange
+        StringContent body = new("""[{"name":"Crystal 8 MHz","quantity":1}, null]""", Encoding.UTF8, "application/json");
+
+        // Act
+        HttpResponseMessage response = await _client.PostAsync(Route, body);
+        ValidationProblemDetails? problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        List<ComponentResponse>? stored = await _client.GetFromJsonAsync<List<ComponentResponse>>($"{Route}?name=Crystal");
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            Assert.That(problem!.Errors["components[1]"], Is.EqualTo(new[] { "Each component must be an object with a name and a quantity." }));
             Assert.That(stored, Is.Empty);
         }
     }

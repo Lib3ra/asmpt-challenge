@@ -21,22 +21,23 @@ how we write and ship code. Change it through a pull request like any other code
 
 ```
 src/OrderManagement.Api/          Minimal API; one folder per feature under Features/
-  Common/Validation/              Validation rules shared by all entities (EntityRules, ValidationErrors)
+  Common/Endpoints/               Shared error responses (ProblemResults)
+  Common/Validation/              Validation rules shared by all entities (EntityRuleExtensions, NameConflicts)
   Data/                           DbContext, startup migration, EF Core migrations (generated)
 tests/OrderManagement.Api.Tests/  NUnit tests, mirroring the Features/ structure
 frontend/                         React + TypeScript + Vite
   src/api/                        HTTP calls and API types, one module per resource
   src/features/<feature>/         Pages and feature-specific components
   src/hooks/                      Shared hooks (useNameSearch, useSelection)
-  src/ui/                         Reusable UI pieces (field errors, delete selection)
-docs/                             Project handbook
+  src/ui/                         Reusable UI pieces (field errors, delete selection, checkbox list)
+docs/                             Architecture outline (architecture.md) and project handbook
 ```
 
 No additional backend projects or architecture frameworks unless agreed.
 
 ## Backend (C#)
 
-- Formatting and style come from `.editorconfig`; `dotnet format --verify-no-changes` must pass.
+- Formatting and style come from `.editorconfig`; `dotnet format --verify-no-changes` must pass (CI checks it).
 - Shared settings in `Directory.Build.props`: nullable enabled, implicit usings, warnings as errors,
   code style enforced at build time.
 - Always use explicit types instead of `var` (`HttpClient client = ...`). Target-typed `new()` is fine.
