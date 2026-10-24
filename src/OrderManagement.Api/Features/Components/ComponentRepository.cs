@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using OrderManagement.Api.Data;
+using OrderManagement.Api.Features.Boards;
 
 namespace OrderManagement.Api.Features.Components;
 
@@ -32,6 +33,34 @@ public sealed class ComponentRepository(AppDbContext db, ILogger<ComponentReposi
         return existing.ToHashSet(StringComparer.OrdinalIgnoreCase);
     }
 
+    public async Task<IReadOnlyList<int>> FindMissingComponentIdsAsync(
+        IReadOnlyCollection<int> ids, CancellationToken cancellationToken)
+    {
+        List<int> existingIds = await db.Components
+            .Where(c => ids.Contains(c.Id))
+            .Select(c => c.Id)
+            .ToListAsync(cancellationToken);
+        return ids.Except(existingIds).ToList();
+    }
+
+    public async Task<IReadOnlyList<ComponentUsage>> FindBoardsUsingComponentsAsync(
+        IReadOnlyCollection<int> ids, CancellationToken cancellationToken)
+    {
+        // Loads only the affected boards; the pairs are built in memory because a correlated
+        // SelectMany would need SQL APPLY, which SQLite does not support.
+        List<Board> boards = await db.Boards
+            .AsNoTracking()
+            .Include(board => board.Components)
+            .Where(board => board.Components.Any(component => ids.Contains(component.Id)))
+            .ToListAsync(cancellationToken);
+
+        return boards
+            .SelectMany(board => board.Components
+                .Where(component => ids.Contains(component.Id))
+                .Select(component => new ComponentUsage(component.Name, board.Name)))
+            .ToList();
+    }
+
     public async Task CreateComponentsAsync(IReadOnlyList<Component> components, CancellationToken cancellationToken)
     {
         db.Components.AddRange(components);
@@ -47,21 +76,9 @@ public sealed class ComponentRepository(AppDbContext db, ILogger<ComponentReposi
         logger.LogInformation("Updated component {ComponentId} ({ComponentName})", component.Id, component.Name);
     }
 
-    public async Task<IReadOnlyList<int>> DeleteComponentsAsync(IReadOnlyCollection<int> ids, CancellationToken cancellationToken)
+    public async Task DeleteComponentsAsync(IReadOnlyCollection<int> ids, CancellationToken cancellationToken)
     {
-        List<Component> components = await db.Components
-            .Where(c => ids.Contains(c.Id))
-            .ToListAsync(cancellationToken);
-
-        List<int> missingIds = ids.Except(components.Select(c => c.Id)).ToList();
-        if (missingIds.Count > 0)
-        {
-            return missingIds;
-        }
-
-        db.Components.RemoveRange(components);
-        await db.SaveChangesAsync(cancellationToken);
-        logger.LogInformation("Deleted {ComponentCount} component(s): {ComponentIds}", components.Count, ids);
-        return [];
+        int deleted = await db.Components.Where(c => ids.Contains(c.Id)).ExecuteDeleteAsync(cancellationToken);
+        logger.LogInformation("Deleted {ComponentCount} component(s): {ComponentIds}", deleted, ids);
     }
 }

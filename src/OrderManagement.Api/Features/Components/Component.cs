@@ -1,10 +1,12 @@
+using OrderManagement.Api.Common.Validation;
+
 namespace OrderManagement.Api.Features.Components;
 
 /// <summary>An electronic component that can be placed on boards.</summary>
 public sealed class Component
 {
-    public const int NameMaxLength = 256;
-    public const int DescriptionMaxLength = 2000;
+    public const int NameMaxLength = EntityLimits.NameMaxLength;
+    public const int DescriptionMaxLength = EntityLimits.DescriptionMaxLength;
     public const int MinQuantity = 1;
     public const int MaxQuantity = 10000;
 

@@ -212,6 +212,26 @@ public sealed class ComponentEndpointTests
     }
 
     [Test]
+    public async Task Delete_WhenComponentIsPlacedOnBoard_ReturnsConflictAndDeletesNothing()
+    {
+        // Arrange
+        await _client.CreateBoardAsync("Controller board", 3);
+
+        // Act
+        HttpResponseMessage response = await _client.DeleteAsync($"{Route}?ids=1&ids=3");
+        ProblemDetails? problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        List<ComponentResponse>? remaining = await _client.GetFromJsonAsync<List<ComponentResponse>>(Route);
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Conflict));
+            Assert.That(problem!.Detail, Is.EqualTo("Still placed on boards: 'LED green' on Controller board. Nothing was deleted."));
+            Assert.That(remaining, Has.Count.EqualTo(SeedData.Components.Length));
+        }
+    }
+
+    [Test]
     public async Task Delete_WithoutIds_ReturnsBadRequest()
     {
         // Act

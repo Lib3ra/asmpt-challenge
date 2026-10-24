@@ -27,6 +27,7 @@ tests/OrderManagement.Api.Tests/  NUnit tests, mirroring the Features/ structure
 frontend/                         React + TypeScript + Vite
   src/api/                        HTTP calls and API types, one module per resource
   src/features/<feature>/         Pages and feature-specific components
+  src/hooks/                      Shared hooks (useNameSearch, useSelection)
   src/ui/                         Reusable UI pieces (field errors, delete selection)
 docs/                             Project handbook
 ```
@@ -71,7 +72,17 @@ No additional backend projects or architecture frameworks unless agreed.
 - Validator unit tests use FluentValidation's `TestValidate` / `ShouldHaveValidationErrorFor`.
 - Document every endpoint in code with `WithSummary` / `WithDescription` (rules, all-or-nothing behavior);
   it ends up in the OpenAPI document and Swagger UI. The README does not list endpoints.
-- "One or more" endpoints: `POST` takes a JSON array, `DELETE` takes `?ids=`; both are all-or-nothing.
+- "One or more" endpoints: `DELETE ?ids=` for every entity; `POST` with a JSON array for components only
+  (boards and orders are created one at a time). Bulk operations are all-or-nothing.
+- Error responses come from `Common/Endpoints/ProblemResults`: 400 `IdsRequired`, 404 `IdsNotFound`,
+  409 `InUse` (delete blocked because the record is still linked). Name conflicts use `NameConflicts`.
+- Links between entities are many-to-many join tables without extra data, configured in `AppDbContext`
+  with `UsingEntity`: the owning side cascades (deleting a board removes its links), the referenced side is
+  `Restrict` (a linked component cannot be deleted). Requests reference linked records by id lists
+  (`componentIds`); the validator checks "at least one" and duplicates, the endpoint checks existence
+  through the repository in step 2.
+- SQLite cannot translate correlated `SelectMany` (needs SQL APPLY); load with `Include` and project in memory.
+- Dates without time (`Order.OrderDate`) are `DateOnly`, sent as `yyyy-MM-dd`; SQLite stores them as sortable text.
 - User-facing messages are culture-invariant (no server-locale number formatting).
 - Logging through `ILogger<T>` with message templates, not string interpolation:
   `logger.LogInformation("Created component {ComponentId}", id)`.
@@ -85,8 +96,8 @@ No additional backend projects or architecture frameworks unless agreed.
 - Structure every test with `// Arrange`, `// Act`, `// Assert` comments. Omit `// Arrange` only when
   there is nothing to set up.
 - Group related assertions with `using (Assert.EnterMultipleScope())` so all failures are reported.
-- API integration tests use `WebApplicationFactory<Program>`, created once per fixture in
-  `[OneTimeSetUp]` and disposed in `[OneTimeTearDown]`.
+- API integration tests use `WebApplicationFactory<Program>` (`SqliteApiFactory`), created per test in
+  `[SetUp]` and disposed in `[TearDown]`, so every test starts from its own freshly migrated database.
 - Persistence tests use an isolated SQLite database per test or fixture, never the developer database.
 - Test relevant behavior only; no tests that exist to raise the test count.
 

@@ -2,6 +2,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using OrderManagement.Api.Common.Endpoints;
 using OrderManagement.Api.Common.Validation;
 
 namespace OrderManagement.Api.Features.Components;
@@ -9,6 +10,7 @@ namespace OrderManagement.Api.Features.Components;
 public static class ComponentEndpoints
 {
     public const string Route = "/api/components";
+    private const string EntityName = "component";
 
     public static IEndpointRouteBuilder MapComponentEndpoints(this IEndpointRouteBuilder app)
     {
@@ -28,7 +30,8 @@ public static class ComponentEndpoints
             .WithDescription("Same rules as create; the name must not belong to another component.");
         group.MapDelete("/", DeleteAsync)
             .WithSummary("Delete one or more components")
-            .WithDescription("Pass the ids as '?ids=1&ids=2'. All-or-nothing: if any id is unknown, nothing is deleted.");
+            .WithDescription("Pass the ids as '?ids=1&ids=2'. All-or-nothing: if any id is unknown (404) or any "
+                + "component is still placed on a board (409), nothing is deleted.");
         return app;
     }
 
@@ -63,13 +66,10 @@ public static class ComponentEndpoints
         // Step 2: names must not belong to stored components.
         IReadOnlySet<string> existingNames = await componentRepository.FindExistingNamesAsync(
             requests.Select(request => request.NormalizedName).ToList(), excludeId: null, cancellationToken);
-        Dictionary<string, string[]> nameErrors = [];
-        for (int index = 0; index < requests.Count; index++)
-        {
-            AddErrorIfNameExists(requests[index].NormalizedName, existingNames,
-                $"{CreateComponentsRequestValidator.ListName}[{index}].name", nameErrors);
-        }
-
+        Dictionary<string, string[]> nameErrors = NameConflicts.ToErrors(
+            EntityName,
+            requests.Select((request, index) => ($"{CreateComponentsRequestValidator.ListName}[{index}].name", request.NormalizedName)),
+            existingNames);
         if (nameErrors.Count > 0)
         {
             return TypedResults.ValidationProblem(nameErrors);
@@ -102,8 +102,8 @@ public static class ComponentEndpoints
         // Step 2: the name must not belong to another stored component.
         IReadOnlySet<string> existingNames = await componentRepository.FindExistingNamesAsync(
             [request.NormalizedName], excludeId: id, cancellationToken);
-        Dictionary<string, string[]> nameErrors = [];
-        AddErrorIfNameExists(request.NormalizedName, existingNames, "name", nameErrors);
+        Dictionary<string, string[]> nameErrors = NameConflicts.ToErrors(
+            EntityName, [("name", request.NormalizedName)], existingNames);
         if (nameErrors.Count > 0)
         {
             return TypedResults.ValidationProblem(nameErrors);
@@ -114,36 +114,39 @@ public static class ComponentEndpoints
         return TypedResults.Ok(ComponentResponse.From(component));
     }
 
-    /// <summary>Deletes one or more components (<c>?ids=1&amp;ids=2</c>). All-or-nothing: unknown ids delete nothing.</summary>
-    private static async Task<Results<NoContent, NotFound<ProblemDetails>, ValidationProblem>> DeleteAsync(
+    /// <summary>
+    /// Deletes one or more components (<c>?ids=1&amp;ids=2</c>). All-or-nothing: unknown ids (404) or components
+    /// still placed on a board (409) delete nothing.
+    /// </summary>
+    private static async Task<Results<NoContent, NotFound<ProblemDetails>, Conflict<ProblemDetails>, ValidationProblem>> DeleteAsync(
         int[]? ids, IComponentRepository componentRepository, CancellationToken cancellationToken)
     {
         if (ids is null || ids.Length == 0)
         {
-            return TypedResults.ValidationProblem(
-                new Dictionary<string, string[]> { ["ids"] = ["At least one id is required."] });
+            return ProblemResults.IdsRequired();
         }
 
-        IReadOnlyList<int> missingIds = await componentRepository.DeleteComponentsAsync(ids.Distinct().ToList(), cancellationToken);
+        List<int> distinctIds = ids.Distinct().ToList();
+        IReadOnlyList<int> missingIds = await componentRepository.FindMissingComponentIdsAsync(distinctIds, cancellationToken);
         if (missingIds.Count > 0)
         {
-            return TypedResults.NotFound(new ProblemDetails
-            {
-                Title = "Components not found",
-                Detail = $"No component exists with id {string.Join(", ", missingIds)}. Nothing was deleted.",
-                Status = StatusCodes.Status404NotFound,
-            });
+            return ProblemResults.IdsNotFound(EntityName, missingIds);
         }
 
+        IReadOnlyList<ComponentUsage> usages = await componentRepository.FindBoardsUsingComponentsAsync(distinctIds, cancellationToken);
+        if (usages.Count > 0)
+        {
+            return ProblemResults.InUse($"Still placed on boards: {DescribeUsages(usages)}.");
+        }
+
+        await componentRepository.DeleteComponentsAsync(distinctIds, cancellationToken);
         return TypedResults.NoContent();
     }
 
-    private static void AddErrorIfNameExists(
-        string name, IReadOnlySet<string> existingNames, string field, Dictionary<string, string[]> errors)
-    {
-        if (existingNames.Contains(name))
-        {
-            errors[field] = [$"A component named '{name}' already exists."];
-        }
-    }
+    /// <summary>e.g. "'LED green' on Controller board, Power board; 'Resistor 10 kOhm' on Controller board".</summary>
+    private static string DescribeUsages(IEnumerable<ComponentUsage> usages) =>
+        string.Join("; ", usages
+            .GroupBy(usage => usage.ComponentName)
+            .OrderBy(group => group.Key, StringComparer.OrdinalIgnoreCase)
+            .Select(group => $"'{group.Key}' on {string.Join(", ", group.Select(usage => usage.BoardName).Order(StringComparer.OrdinalIgnoreCase))}"));
 }

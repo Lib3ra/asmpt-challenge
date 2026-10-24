@@ -15,14 +15,21 @@ public interface IComponentRepository
     Task<IReadOnlySet<string>> FindExistingNamesAsync(
         IReadOnlyCollection<string> names, int? excludeId, CancellationToken cancellationToken);
 
+    /// <summary>Returns those of <paramref name="ids"/> that do not belong to a stored component.</summary>
+    Task<IReadOnlyList<int>> FindMissingComponentIdsAsync(IReadOnlyCollection<int> ids, CancellationToken cancellationToken);
+
+    /// <summary>Lists which of the given components are placed on which boards.</summary>
+    Task<IReadOnlyList<ComponentUsage>> FindBoardsUsingComponentsAsync(
+        IReadOnlyCollection<int> ids, CancellationToken cancellationToken);
+
     /// <summary>Stores all components in one transaction.</summary>
     Task CreateComponentsAsync(IReadOnlyList<Component> components, CancellationToken cancellationToken);
 
     Task UpdateComponentAsync(Component component, CancellationToken cancellationToken);
 
-    /// <summary>
-    /// Deletes all components with the given ids in one transaction. If any id does not exist, nothing is
-    /// deleted and the missing ids are returned.
-    /// </summary>
-    Task<IReadOnlyList<int>> DeleteComponentsAsync(IReadOnlyCollection<int> ids, CancellationToken cancellationToken);
+    /// <summary>Deletes the components with the given ids in one statement. Callers check existence and usage first.</summary>
+    Task DeleteComponentsAsync(IReadOnlyCollection<int> ids, CancellationToken cancellationToken);
 }
+
+/// <summary>One component placed on one board; used to explain why a delete is blocked.</summary>
+public sealed record ComponentUsage(string ComponentName, string BoardName);
