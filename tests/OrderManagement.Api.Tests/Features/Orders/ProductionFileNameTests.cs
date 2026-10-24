@@ -1,6 +1,6 @@
-using OrderManagement.Api.Features.ProductionDownload;
+using OrderManagement.Api.Features.Orders;
 
-namespace OrderManagement.Api.Tests.Features.ProductionDownload;
+namespace OrderManagement.Api.Tests.Features.Orders;
 
 [TestFixture]
 public sealed class ProductionFileNameTests

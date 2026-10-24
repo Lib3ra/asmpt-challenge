@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace OrderManagement.Api.Features.ProductionDownload;
+namespace OrderManagement.Api.Features.Orders;
 
 /// <summary>Builds the download file name <c>order-&lt;id&gt;-&lt;name&gt;.json</c> with a safe, lower-case name part.</summary>
 public static class ProductionFileName
@@ -13,20 +13,20 @@ public static class ProductionFileName
     /// </summary>
     public static string For(int orderId, string orderName)
     {
-        StringBuilder slug = new();
+        StringBuilder safeName = new();
         foreach (char character in orderName.ToLowerInvariant())
         {
             if (char.IsAsciiLetterOrDigit(character))
             {
-                slug.Append(character);
+                safeName.Append(character);
             }
-            else if (slug.Length > 0 && slug[^1] != '-')
+            else if (safeName.Length > 0 && safeName[^1] != '-')
             {
-                slug.Append('-');
+                safeName.Append('-');
             }
         }
 
-        string name = slug.ToString(0, Math.Min(slug.Length, NameMaxLength)).Trim('-');
-        return name.Length == 0 ? $"order-{orderId}.json" : $"order-{orderId}-{name}.json";
+        string safeNamePart = safeName.ToString(0, Math.Min(safeName.Length, NameMaxLength)).Trim('-');
+        return safeNamePart.Length == 0 ? $"order-{orderId}.json" : $"order-{orderId}-{safeNamePart}.json";
     }
 }

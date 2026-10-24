@@ -1,8 +1,7 @@
 using OrderManagement.Api.Features.Boards;
 using OrderManagement.Api.Features.Components;
-using OrderManagement.Api.Features.Orders;
 
-namespace OrderManagement.Api.Features.ProductionDownload;
+namespace OrderManagement.Api.Features.Orders;
 
 /// <summary>
 /// The file handed to a production line: the order with everything needed to build it, nested

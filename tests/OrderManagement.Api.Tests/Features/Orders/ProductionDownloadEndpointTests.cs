@@ -2,10 +2,9 @@ using System.Net;
 using System.Net.Http.Json;
 using OrderManagement.Api.Features.Boards;
 using OrderManagement.Api.Features.Orders;
-using OrderManagement.Api.Features.ProductionDownload;
 using OrderManagement.Api.Tests.Infrastructure;
 
-namespace OrderManagement.Api.Tests.Features.ProductionDownload;
+namespace OrderManagement.Api.Tests.Features.Orders;
 
 /// <summary>Downloads orders against a fresh SQLite database per test (seeded with the five component presets).</summary>
 [TestFixture]

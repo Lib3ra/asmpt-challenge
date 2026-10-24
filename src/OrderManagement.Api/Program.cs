@@ -4,7 +4,6 @@ using OrderManagement.Api.Features.Boards;
 using OrderManagement.Api.Features.Components;
 using OrderManagement.Api.Features.Health;
 using OrderManagement.Api.Features.Orders;
-using OrderManagement.Api.Features.ProductionDownload;
 using OrderManagement.Api.Features.Search;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -53,7 +52,6 @@ app.MapHealthEndpoints();
 app.MapComponentEndpoints();
 app.MapBoardEndpoints();
 app.MapOrderEndpoints();
-app.MapProductionDownloadEndpoints();
 app.MapSearchEndpoints();
 
 // Unknown API routes return 404 instead of falling through to the React app.
