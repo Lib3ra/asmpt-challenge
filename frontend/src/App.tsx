@@ -2,6 +2,7 @@ import { Navigate, NavLink, Route, Routes } from 'react-router'
 import { BoardsPage } from './features/boards/BoardsPage'
 import { ComponentsPage } from './features/components/ComponentsPage'
 import { OrdersPage } from './features/orders/OrdersPage'
+import { SearchPage } from './features/search/SearchPage'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <NavLink to="/components">Components</NavLink>
           <NavLink to="/boards">Boards</NavLink>
           <NavLink to="/orders">Orders</NavLink>
+          <NavLink to="/search">Search</NavLink>
         </nav>
       </header>
       <main>
@@ -20,6 +22,7 @@ function App() {
           <Route path="/components" element={<ComponentsPage />} />
           <Route path="/boards" element={<BoardsPage />} />
           <Route path="/orders" element={<OrdersPage />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>

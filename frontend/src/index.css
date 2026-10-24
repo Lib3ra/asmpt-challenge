@@ -130,7 +130,8 @@ label {
   color: var(--muted);
 }
 
-input {
+input,
+select {
   font: inherit;
   color: var(--text);
   background: var(--surface);
@@ -277,6 +278,10 @@ label.checkbox-option {
   flex: 0 1 20rem;
 }
 
+.toolbar-start {
+  justify-content: flex-start;
+}
+
 .notice {
   margin: 0;
   padding: 0.3rem 0.6rem;
@@ -355,4 +360,16 @@ tr.editing td {
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+.search-group h2 {
+  margin-bottom: 0.25rem;
+}
+
+.search-group ul {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
