@@ -16,6 +16,54 @@ namespace OrderManagement.Api.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.13");
 
+            modelBuilder.Entity("BoardComponents", b =>
+                {
+                    b.Property<int>("BoardId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ComponentId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("BoardId", "ComponentId");
+
+                    b.HasIndex("ComponentId");
+
+                    b.ToTable("BoardComponents");
+                });
+
+            modelBuilder.Entity("OrderManagement.Api.Features.Boards.Board", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("LengthMm")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.Property<decimal>("WidthMm")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Boards");
+                });
+
             modelBuilder.Entity("OrderManagement.Api.Features.Components.Component", b =>
                 {
                     b.Property<int>("Id")
@@ -79,6 +127,21 @@ namespace OrderManagement.Api.Data.Migrations
                             Name = "Voltage regulator AMS1117-3.3",
                             Quantity = 2
                         });
+                });
+
+            modelBuilder.Entity("BoardComponents", b =>
+                {
+                    b.HasOne("OrderManagement.Api.Features.Boards.Board", null)
+                        .WithMany()
+                        .HasForeignKey("BoardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OrderManagement.Api.Features.Components.Component", null)
+                        .WithMany()
+                        .HasForeignKey("ComponentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

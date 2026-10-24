@@ -1,5 +1,6 @@
 using FluentValidation;
 using OrderManagement.Api.Data;
+using OrderManagement.Api.Features.Boards;
 using OrderManagement.Api.Features.Components;
 using OrderManagement.Api.Features.Health;
 
@@ -7,6 +8,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDatabase(builder.Configuration, builder.Environment);
 builder.Services.AddScoped<IComponentRepository, ComponentRepository>();
+builder.Services.AddScoped<IBoardRepository, BoardRepository>();
 
 // Registers every FluentValidation validator in this assembly. Validators are stateless, so one instance is shared.
 builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
@@ -45,6 +47,7 @@ app.UseSwaggerUI(options =>
 
 app.MapHealthEndpoints();
 app.MapComponentEndpoints();
+app.MapBoardEndpoints();
 
 // Unknown API routes return 404 instead of falling through to the React app.
 app.Map("/api/{**path}", () => Results.NotFound()).ExcludeFromDescription();
