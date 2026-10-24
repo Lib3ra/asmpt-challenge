@@ -32,8 +32,8 @@ public static class BoardEndpoints
             .WithDescription("Same rules as create. componentIds replaces the board's components.");
         group.MapDelete("/", DeleteAsync)
             .WithSummary("Delete one or more boards")
-            .WithDescription("Pass the ids as '?ids=1&ids=2'. All-or-nothing: if any id is unknown (404), nothing is deleted. "
-                + "The links to components are removed; the components remain.");
+            .WithDescription("Pass the ids as '?ids=1&ids=2'. All-or-nothing: if any id is unknown (404) or any board "
+                + "is still part of an order (409), nothing is deleted. The links to components are removed; the components remain.");
         return app;
     }
 
@@ -109,8 +109,11 @@ public static class BoardEndpoints
         return board is null ? TypedResults.NotFound() : TypedResults.Ok(BoardResponse.From(board));
     }
 
-    /// <summary>Deletes one or more boards (<c>?ids=1&amp;ids=2</c>). All-or-nothing: unknown ids (404) delete nothing.</summary>
-    private static async Task<Results<NoContent, NotFound<ProblemDetails>, ValidationProblem>> DeleteAsync(
+    /// <summary>
+    /// Deletes one or more boards (<c>?ids=1&amp;ids=2</c>). All-or-nothing: unknown ids (404) or boards still
+    /// part of an order (409) delete nothing.
+    /// </summary>
+    private static async Task<Results<NoContent, NotFound<ProblemDetails>, Conflict<ProblemDetails>, ValidationProblem>> DeleteAsync(
         int[]? ids, IBoardRepository boardRepository, CancellationToken cancellationToken)
     {
         if (ids is null || ids.Length == 0)
@@ -125,9 +128,22 @@ public static class BoardEndpoints
             return ProblemResults.IdsNotFound(EntityName, missingIds);
         }
 
+        IReadOnlyList<BoardUsage> usages = await boardRepository.FindOrdersUsingBoardsAsync(distinctIds, cancellationToken);
+        if (usages.Count > 0)
+        {
+            return ProblemResults.InUse($"Still part of orders: {DescribeUsages(usages)}.");
+        }
+
         await boardRepository.DeleteBoardsAsync(distinctIds, cancellationToken);
         return TypedResults.NoContent();
     }
+
+    /// <summary>e.g. "'Controller board' in ORD-1, ORD-2; 'Power board' in ORD-1".</summary>
+    private static string DescribeUsages(IEnumerable<BoardUsage> usages) =>
+        string.Join("; ", usages
+            .GroupBy(usage => usage.BoardName)
+            .OrderBy(group => group.Key)
+            .Select(group => $"'{group.Key}' in {string.Join(", ", group.Select(usage => usage.OrderName).Order())}"));
 
     private static async Task<Dictionary<string, string[]>> CheckAgainstDatabaseAsync(
         BoardRequest request,

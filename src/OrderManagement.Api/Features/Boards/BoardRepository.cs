@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using OrderManagement.Api.Data;
 using OrderManagement.Api.Features.Components;
+using OrderManagement.Api.Features.Orders;
 
 namespace OrderManagement.Api.Features.Boards;
 
@@ -30,6 +31,24 @@ public sealed class BoardRepository(AppDbContext db, ILogger<BoardRepository> lo
     {
         List<int> existingIds = await db.Boards.Where(b => ids.Contains(b.Id)).Select(b => b.Id).ToListAsync(cancellationToken);
         return ids.Except(existingIds).ToList();
+    }
+
+    public async Task<IReadOnlyList<BoardUsage>> FindOrdersUsingBoardsAsync(
+        IReadOnlyCollection<int> ids, CancellationToken cancellationToken)
+    {
+        // Loads only the affected orders; the pairs are built in memory because a correlated
+        // SelectMany would need SQL APPLY, which SQLite does not support.
+        List<Order> orders = await db.Orders
+            .AsNoTracking()
+            .Include(order => order.Boards)
+            .Where(order => order.Boards.Any(board => ids.Contains(board.Id)))
+            .ToListAsync(cancellationToken);
+
+        return orders
+            .SelectMany(order => order.Boards
+                .Where(board => ids.Contains(board.Id))
+                .Select(board => new BoardUsage(board.Name, order.Name)))
+            .ToList();
     }
 
     public async Task<Board> CreateBoardAsync(

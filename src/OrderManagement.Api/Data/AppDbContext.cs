@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using OrderManagement.Api.Features.Boards;
 using OrderManagement.Api.Features.Components;
+using OrderManagement.Api.Features.Orders;
 
 namespace OrderManagement.Api.Data;
 
@@ -13,6 +14,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<Component> Components => Set<Component>();
 
     public DbSet<Board> Boards => Set<Board>();
+
+    public DbSet<Order> Orders => Set<Order>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -47,6 +50,22 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
                     "BoardComponents",
                     link => link.HasOne<Component>().WithMany().HasForeignKey("ComponentId").OnDelete(DeleteBehavior.Restrict),
                     link => link.HasOne<Board>().WithMany().HasForeignKey("BoardId").OnDelete(DeleteBehavior.Cascade));
+        });
+
+        modelBuilder.Entity<Order>(order =>
+        {
+            order.Property(o => o.Name).IsRequired().HasMaxLength(Order.NameMaxLength).UseCollation("NOCASE");
+            order.HasIndex(o => o.Name).IsUnique();
+            order.Property(o => o.Description).IsRequired().HasMaxLength(Order.DescriptionMaxLength);
+
+            // Same pattern as boards: deleting an order removes its links (Cascade); a board that is still
+            // part of an order cannot be deleted (Restrict).
+            order.HasMany(o => o.Boards)
+                .WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "OrderBoards",
+                    link => link.HasOne<Board>().WithMany().HasForeignKey("BoardId").OnDelete(DeleteBehavior.Restrict),
+                    link => link.HasOne<Order>().WithMany().HasForeignKey("OrderId").OnDelete(DeleteBehavior.Cascade));
         });
     }
 }

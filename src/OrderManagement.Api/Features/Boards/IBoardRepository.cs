@@ -15,6 +15,9 @@ public interface IBoardRepository
     /// <summary>Returns those of <paramref name="ids"/> that do not belong to a stored board.</summary>
     Task<IReadOnlyList<int>> FindMissingBoardIdsAsync(IReadOnlyCollection<int> ids, CancellationToken cancellationToken);
 
+    /// <summary>Lists which of the given boards are part of which orders.</summary>
+    Task<IReadOnlyList<BoardUsage>> FindOrdersUsingBoardsAsync(IReadOnlyCollection<int> ids, CancellationToken cancellationToken);
+
     /// <summary>Stores the board linked to the given components. The component ids must exist.</summary>
     Task<Board> CreateBoardAsync(Board board, IReadOnlyCollection<int> componentIds, CancellationToken cancellationToken);
 
@@ -24,6 +27,9 @@ public interface IBoardRepository
     /// </summary>
     Task<Board?> UpdateBoardAsync(Board changes, IReadOnlyCollection<int> componentIds, CancellationToken cancellationToken);
 
-    /// <summary>Deletes the boards and their component links. Callers check existence first.</summary>
+    /// <summary>Deletes the boards and their component links. Callers check existence and usage first.</summary>
     Task DeleteBoardsAsync(IReadOnlyCollection<int> ids, CancellationToken cancellationToken);
 }
+
+/// <summary>One board in one order; used to explain why a delete is blocked.</summary>
+public sealed record BoardUsage(string BoardName, string OrderName);
