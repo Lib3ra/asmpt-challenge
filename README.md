@@ -141,13 +141,19 @@ Windows), not a folder in this repository. The whole directory is persisted, inc
   image applies only its new migrations to the existing data.
 - **Inspect the volume:** `docker volume inspect order-manager_order-manager-data`.
 
-Data and the volume:
+### Common commands
 
-| Command                  | Containers | Data (volume) |
-| ------------------------ | ---------- | ------------- |
-| `docker compose restart` | restarted  | kept          |
-| `docker compose down`    | removed    | **kept**      |
-| `docker compose down -v` | removed    | **deleted**   |
+| Command                        | Rebuilds image from source | Container                     | Data (volume) |
+| ------------------------------ | -------------------------- | ----------------------------- | ------------- |
+| `docker compose restart`       | no                         | same container restarted      | kept          |
+| `docker compose up -d`         | only if no image exists    | recreated if config changed   | kept          |
+| `docker compose up --build -d` | **yes**                    | recreated if the image changed | kept         |
+| `docker compose down`          | no                         | removed                       | **kept**      |
+| `docker compose down -v`       | no                         | removed                       | **deleted**   |
+
+After changing code, run `docker compose up --build -d`; there is no need to remove anything first. New
+migrations are applied when the new container starts. Use `down -v` only to start over with an empty database
+(plus the demo components). For day-to-day development, `dotnet run` and `npm run dev` give faster feedback.
 
 The app is designed to run as a single instance.
 
