@@ -46,7 +46,6 @@ export function ComponentsPage() {
               id="component-name-filter"
               type="search"
               value={nameFilter}
-              placeholder="e.g. resistor"
               onChange={(event) => setNameFilter(event.target.value)}
             />
           </label>
