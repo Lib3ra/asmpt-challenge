@@ -89,7 +89,7 @@ cd frontend
 npm run dev
 ```
 
-Open http://localhost:5173. The page shows the API status reported by `GET /api/health`.
+Open http://localhost:5173.
 
 To point Vite at a different API address, set `API_URL`, for example `API_URL=http://localhost:5000 npm run dev`.
 

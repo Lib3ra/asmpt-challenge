@@ -89,19 +89,6 @@ main {
   border-bottom-color: var(--accent);
 }
 
-.api-status {
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-
-.api-status[data-state='ok'] {
-  color: var(--accent);
-}
-
-.api-status[data-state='error'] {
-  color: var(--danger);
-}
-
 .page {
   display: grid;
   gap: 1.25rem;
@@ -293,7 +280,7 @@ th {
   letter-spacing: 0.04em;
 }
 
-td input {
+td input:not([type='checkbox']) {
   width: 100%;
   box-sizing: border-box;
 }
@@ -304,8 +291,13 @@ td input {
   width: 8rem;
 }
 
+/* Header and row checkboxes share one column and the same position. */
 .select-cell {
-  width: 2rem;
+  width: 1.5rem;
+}
+
+.select-cell input {
+  margin: 0.2rem 0 0;
 }
 
 .row-actions {
