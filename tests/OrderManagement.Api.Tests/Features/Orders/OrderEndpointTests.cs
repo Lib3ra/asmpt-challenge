@@ -58,7 +58,7 @@ public sealed class OrderEndpointTests
     }
 
     [Test]
-    public async Task Create_SendsOrderDateAsPlainDate()
+    public async Task Create_WithOrderDate_ReturnsPlainDateWithoutTime()
     {
         // Act
         HttpResponseMessage response = await _client.PostAsJsonAsync(Route, new OrderRequest("ORD-1", null, new DateOnly(2026, 1, 5), [_powerBoard.Id]));
@@ -207,26 +207,6 @@ public sealed class OrderEndpointTests
         {
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             Assert.That(orders, Has.Count.EqualTo(1));
-        }
-    }
-
-    [Test]
-    public async Task DeleteBoard_WhenBoardIsPartOfOrder_ReturnsConflictAndDeletesNothing()
-    {
-        // Arrange
-        await _client.CreateOrderAsync("ORD-1", _controllerBoard.Id);
-
-        // Act
-        HttpResponseMessage response = await _client.DeleteAsync($"{BoardEndpoints.Route}?ids={_controllerBoard.Id}&ids={_powerBoard.Id}");
-        ProblemDetails? problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-        List<BoardResponse>? boards = await _client.GetFromJsonAsync<List<BoardResponse>>(BoardEndpoints.Route);
-
-        // Assert
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Conflict));
-            Assert.That(problem!.Detail, Is.EqualTo("Still part of orders: 'Controller board' in ORD-1. Nothing was deleted."));
-            Assert.That(boards, Has.Count.EqualTo(2));
         }
     }
 }

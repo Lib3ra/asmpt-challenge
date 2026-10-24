@@ -33,5 +33,5 @@ public sealed record OrderResponse(int Id, string Name, string Description, Date
 {
     public static OrderResponse From(Order order) =>
         new(order.Id, order.Name, order.Description, order.OrderDate,
-            order.Boards.OrderBy(b => b.Name).Select(OrderBoardResponse.From).ToList());
+            order.Boards.OrderBy(b => b.Name, StringComparer.OrdinalIgnoreCase).Select(OrderBoardResponse.From).ToList());
 }

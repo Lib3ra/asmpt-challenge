@@ -32,7 +32,7 @@ public sealed class OrderDatabaseRulesTests
     }
 
     [Test]
-    public async Task DeletingBoardInOrderDirectly_IsRejectedByForeignKey()
+    public async Task DeleteBoardInDatabase_WhenBoardIsInOrder_ThrowsForeignKeyError()
     {
         // Arrange
         BoardResponse board = await _client.CreateBoardAsync("Controller board", 1);
@@ -48,7 +48,7 @@ public sealed class OrderDatabaseRulesTests
     }
 
     [Test]
-    public async Task DeletingOrder_RemovesItsBoardLinks()
+    public async Task DeleteOrderInDatabase_WithBoards_RemovesItsBoardLinks()
     {
         // Arrange
         BoardResponse board = await _client.CreateBoardAsync("Controller board", 1);

@@ -138,7 +138,7 @@ public static class OrderEndpoints
         Dictionary<string, string[]> errors = [];
         if (await orderRepository.NameExistsAsync(request.NormalizedName, excludeId, cancellationToken))
         {
-            errors["name"] = [$"An {EntityName} named '{request.NormalizedName}' already exists."];
+            errors["name"] = [NameConflicts.Message(EntityName, request.NormalizedName)];
         }
 
         IReadOnlyList<int> missingBoardIds = await boardRepository.FindMissingBoardIdsAsync(request.BoardIdList.ToList(), cancellationToken);

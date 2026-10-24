@@ -194,4 +194,26 @@ public sealed class BoardEndpointTests
             Assert.That(boards, Has.Count.EqualTo(1));
         }
     }
+
+    [Test]
+    public async Task Delete_WhenBoardIsPartOfOrder_ReturnsConflictAndDeletesNothing()
+    {
+        // Arrange
+        BoardResponse controllerBoard = await _client.CreateBoardAsync("Controller board", 1, 3);
+        BoardResponse powerBoard = await _client.CreateBoardAsync("Power board", 5);
+        await _client.CreateOrderAsync("ORD-1", controllerBoard.Id);
+
+        // Act
+        HttpResponseMessage response = await _client.DeleteAsync($"{Route}?ids={controllerBoard.Id}&ids={powerBoard.Id}");
+        ProblemDetails? problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        List<BoardResponse>? boards = await _client.GetFromJsonAsync<List<BoardResponse>>(Route);
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Conflict));
+            Assert.That(problem!.Detail, Is.EqualTo("Still part of orders: 'Controller board' in ORD-1. Nothing was deleted."));
+            Assert.That(boards, Has.Count.EqualTo(2));
+        }
+    }
 }

@@ -14,6 +14,10 @@ public static class NameConflicts
                 candidate => candidate.Field,
                 candidate => new[] { Message(entityName, candidate.Name) });
 
-    /// <summary>e.g. "A board named 'Controller board' already exists."</summary>
-    public static string Message(string entityName, string name) => $"A {entityName} named '{name}' already exists.";
+    /// <summary>e.g. "A board named 'Controller board' already exists." or "An order named 'ORD-1' already exists."</summary>
+    public static string Message(string entityName, string name)
+    {
+        string article = "aeiou".Contains(char.ToLowerInvariant(entityName[0])) ? "An" : "A";
+        return $"{article} {entityName} named '{name}' already exists.";
+    }
 }

@@ -142,8 +142,8 @@ public static class BoardEndpoints
     private static string DescribeUsages(IEnumerable<BoardUsage> usages) =>
         string.Join("; ", usages
             .GroupBy(usage => usage.BoardName)
-            .OrderBy(group => group.Key)
-            .Select(group => $"'{group.Key}' in {string.Join(", ", group.Select(usage => usage.OrderName).Order())}"));
+            .OrderBy(group => group.Key, StringComparer.OrdinalIgnoreCase)
+            .Select(group => $"'{group.Key}' in {string.Join(", ", group.Select(usage => usage.OrderName).Order(StringComparer.OrdinalIgnoreCase))}"));
 
     private static async Task<Dictionary<string, string[]>> CheckAgainstDatabaseAsync(
         BoardRequest request,
