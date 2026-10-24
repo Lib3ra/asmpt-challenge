@@ -55,3 +55,33 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# IDEs and OS
+.vs/
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.user
+*.suo
+.DS_Store
+
+# Local configuration and secrets
+*.local
+appsettings.*.local.json
+.env.*
+!.env.example
+
+# SQLite databases (never commit local data)
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+*.sqlite
+*.sqlite3
+/data/
+
+# Frontend
+node_modules/
+frontend/dist/
+*.tsbuildinfo
+npm-debug.log*

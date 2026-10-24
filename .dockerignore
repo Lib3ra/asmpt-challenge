@@ -1,0 +1,27 @@
+# Keep the build context small and free of local state.
+.git
+.github
+.vs
+.vscode
+.idea
+**/.DS_Store
+
+**/bin
+**/obj
+**/node_modules
+frontend/dist
+
+# Local data, configuration and secrets
+**/*.db
+**/*.db-shm
+**/*.db-wal
+**/*.db-journal
+data/
+**/.env
+**/.env.*
+**/*.local
+**/appsettings.*.local.json
+
+docs/
+*.pdf
+**/*.md

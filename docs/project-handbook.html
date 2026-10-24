@@ -1,0 +1,265 @@
+<title>SMT Order Manager Handbuch</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column, left margin rail with section codes like a PCB silkscreen reference designator */
+:root {
+  --ground: #f6f8f6;
+  --surface: #ffffff;
+  --ink: #18221d;
+  --muted: #5a6a62;
+  --line: #d6dfda;
+  --mask: #1f6b4a;        /* solder-mask green, accent */
+  --copper: #a8642a;      /* copper pad, secondary */
+  --ok-bg: #e3f1e9; --ok-ink: #1d5c3f;
+  --opt-bg: #f6ebdf; --opt-ink: #7d4718;
+  --dev-bg: #ece9f3; --dev-ink: #4c3f73;
+  --open-bg: #fbf0d6; --open-ink: #6b5310;
+  --f-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --s-1: .8125rem; --s0: 1rem; --s1: 1.25rem; --s2: 1.75rem; --s3: 2.5rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #0f1613; --surface: #151f1a; --ink: #e2ebe6; --muted: #93a59b; --line: #2a3832;
+    --mask: #5cc392; --copper: #d99a5f;
+    --ok-bg: #173527; --ok-ink: #9fe0bf; --opt-bg: #3a2817; --opt-ink: #f0c08f;
+    --dev-bg: #2a2540; --dev-ink: #c9bdf2; --open-bg: #3a3012; --open-ink: #f1d77f;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #0f1613; --surface: #151f1a; --ink: #e2ebe6; --muted: #93a59b; --line: #2a3832;
+  --mask: #5cc392; --copper: #d99a5f;
+  --ok-bg: #173527; --ok-ink: #9fe0bf; --opt-bg: #3a2817; --opt-ink: #f0c08f;
+  --dev-bg: #2a2540; --dev-ink: #c9bdf2; --open-bg: #3a3012; --open-ink: #f1d77f;
+}
+body {
+  background: var(--ground); color: var(--ink);
+  font: 400 var(--s0)/1.6 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 52rem; margin: 0 auto; padding-block: 3rem 5rem; display: grid; gap: 3.5rem; }
+header { display: grid; gap: .75rem; border-bottom: 2px solid var(--mask); padding-bottom: 1.75rem; }
+.eyebrow { font: 500 var(--s-1)/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--copper); }
+h1 { font: 800 var(--s3)/1.05 var(--f-display); font-stretch: 80%; margin: 0; text-wrap: balance; }
+h2 { font: 700 var(--s2)/1.15 var(--f-display); font-stretch: 85%; margin: 0; text-wrap: balance; }
+h3 { font: 600 var(--s1)/1.3 var(--f-body); margin: 0; }
+p { margin: 0; max-width: 65ch; }
+.lede { color: var(--muted); max-width: 62ch; }
+.meta { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; font: 400 var(--s-1)/1.4 var(--f-mono); color: var(--muted); }
+section { display: grid; grid-template-columns: 4.5rem 1fr; gap: 0 1.25rem; }
+.ref { font: 500 var(--s-1)/1 var(--f-mono); color: var(--mask); padding-top: .55rem; border-top: 1px solid var(--mask); align-self: start; letter-spacing: .04em; }
+.body { display: grid; gap: 1.25rem; min-width: 0; }
+@media (max-width: 560px) { section { grid-template-columns: 1fr; gap: .5rem; } .ref { border-top: 0; padding-top: 0; } }
+ul.items { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; }
+ul.items li { display: grid; grid-template-columns: 7.5rem 1fr; gap: .75rem; align-items: baseline; }
+@media (max-width: 560px) { ul.items li { grid-template-columns: 1fr; gap: .2rem; } }
+.tag { font: 500 .72rem/1 var(--f-mono); letter-spacing: .05em; text-transform: uppercase; padding: .32rem .5rem; border-radius: 3px; justify-self: start; white-space: nowrap; }
+.t-ok { background: var(--ok-bg); color: var(--ok-ink); }
+.t-opt { background: var(--opt-bg); color: var(--opt-ink); }
+.t-dev { background: var(--dev-bg); color: var(--dev-ink); }
+.t-open { background: var(--open-bg); color: var(--open-ink); }
+.group { display: grid; gap: .75rem; }
+.note { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--copper); padding: 1rem 1.15rem; display: grid; gap: .5rem; }
+.note p { color: var(--ink); }
+code, .mono { font-family: var(--f-mono); font-size: .88em; }
+code { background: var(--surface); border: 1px solid var(--line); padding: .05em .3em; border-radius: 3px; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: .94rem; }
+th, td { text-align: left; vertical-align: top; padding: .6rem .8rem; border-bottom: 1px solid var(--line); }
+th { font: 500 var(--s-1)/1.3 var(--f-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); background: var(--ground); }
+tr:last-child td { border-bottom: 0; }
+td:first-child { font-weight: 600; white-space: nowrap; }
+ol.prs { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-left: 2px solid var(--line); }
+ol.prs li { position: relative; padding: 0 0 1.25rem 1.4rem; display: grid; gap: .3rem; }
+ol.prs li::before { content: ""; position: absolute; left: -7px; top: .45rem; width: 10px; height: 10px; border-radius: 50%; background: var(--ground); border: 2px solid var(--line); }
+ol.prs li.active::before { background: var(--mask); border-color: var(--mask); }
+.pr-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem .75rem; }
+.pr-num { font: 500 var(--s-1)/1 var(--f-mono); color: var(--copper); }
+.pr-text { color: var(--muted); font-size: .94rem; }
+a { color: var(--mask); }
+a:focus-visible { outline: 2px solid var(--mask); outline-offset: 2px; }
+footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono); }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">ASMPT Coding Challenge · Projekt-Handbuch</span>
+    <h1>SMT Order Manager Handbuch</h1>
+    <p class="lede">Abgleich mit der Aufgabenstellung, festgelegte technische Entscheidungen, Code-Konventionen und der PR-Plan. Dieses Dokument wird mit jedem PR fortgeschrieben.</p>
+    <div class="meta"><span>Repo: Lib3ra/asmpt-challenge</span><span>Stand: 24.10.2026</span><span>Aktueller Schritt: PR 1</span></div>
+  </header>
+
+  <section>
+    <div class="ref">A-01</div>
+    <div class="body">
+      <h2>Pflichtanforderungen der Challenge</h2>
+      <ul class="items">
+        <li><span class="tag t-ok">Pflicht</span><span>Plattformunabhängige C#-Anwendung zur Verwaltung von Orders in einer SMT-Fertigung.</span></li>
+        <li><span class="tag t-ok">Pflicht</span><span>CRUD für <b>Orders</b>, <b>Boards</b> und <b>Components</b>.</span></li>
+        <li><span class="tag t-ok">Pflicht</span><span>Many-to-many: Order ↔ Board („one or more“ Boards pro Order, Board in „one or multiple“ Orders) und Board ↔ Component („one or more“ Components pro Board, Component auf „one or more“ Boards).</span></li>
+        <li><span class="tag t-ok">Pflicht</span><span>Attribute: Order (Name, Description, Order Date), Board (Name, Description, Length, Width), Component (Name, Description, Quantity). IDs, Fremdschlüssel und Referenzlisten dürfen ergänzt werden.</span></li>
+        <li><span class="tag t-ok">Pflicht</span><span>Erstellen, Bearbeiten, Suchen und Entfernen von <b>einem oder mehreren</b> Components, Boards und Orders.</span></li>
+        <li><span class="tag t-ok">Pflicht</span><span>Download eines Orders, der die Übergabe an eine Produktionslinie simuliert.</span></li>
+        <li><span class="tag t-ok">Pflicht</span><span>Serialisierung nach JSON; Persistenz mit frei wählbarer Technologie.</span></li>
+        <li><span class="tag t-ok">Pflicht</span><span>Logging relevanter Aktionen und Fehler mit einem verbreiteten Framework.</span></li>
+        <li><span class="tag t-ok">Pflicht</span><span>OOP-Prinzipien (SOLID, DRY), Standard-Entwurfsmuster, Unit-Test für mindestens eine repräsentative Methode.</span></li>
+        <li><span class="tag t-ok">Empfohlen</span><span>Übersicht der modellierten Klassen und der Architektur für die Präsentation im Team („would be beneficial“).</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="ref">A-02</div>
+    <div class="body">
+      <h2>Optionale Anforderungen, die wir umsetzen</h2>
+      <ul class="items">
+        <li><span class="tag t-opt">Optional</span><span><b>Version Control</b>: GitHub, kleine Branches, reviewbare PRs. Repository zum Abschluss für Reviewer freigeben.</span></li>
+        <li><span class="tag t-opt">Optional</span><span><b>CI</b>: GitHub Actions baut und testet automatisch und erstellt auf <code>main</code> ein Docker-Image-Artefakt mit Commit-SHA als Tag.</span></li>
+        <li><span class="tag t-opt">Optional</span><span><b>Web Interface</b>: React-UI über eine ASP.NET Core Web API mit CRUD für alle drei Entitäten.</span></li>
+        <li><span class="tag t-opt">Optional</span><span><b>Persistenz über Neustarts</b>: SQLite mit EF Core, Docker Named Volume auf <code>/data</code>.</span></li>
+        <li><span class="tag t-opt">Optional</span><span><b>Containerisierung</b>: mehrstufiges Dockerfile, Docker Compose. API, Datenbank (SQLite-Datei) und Frontend in einem Container.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="ref">A-03</div>
+    <div class="body">
+      <h2>Bewusste Abweichungen</h2>
+      <ul class="items">
+        <li><span class="tag t-dev">Ausgelassen</span><span><b>Cloud-Deployment</b> (Teil der optionalen CI/CD-Anforderung): kein Azure, kein Neon, kein Registry-Push. Die Pipeline endet beim herunterladbaren Image-Artefakt.</span></li>
+        <li><span class="tag t-dev">Ausgelassen</span><span><b>Login und Authentifizierung</b> (Teil der optionalen Web-Interface-Anforderung, „accessible via login“). Die UI ist ohne Anmeldung erreichbar.</span></li>
+        <li><span class="tag t-dev">Eingeschränkt</span><span><b>„Runnable locally and in the cloud“</b>: Das Image ist cloud-tauglich gebaut (non-root, Konfiguration über Umgebungsvariablen), wird aber nur lokal betrieben und geprüft.</span></li>
+        <li><span class="tag t-dev">Eingeschränkt</span><span><b>„Build on each commit“</b>: CI läuft bei Pull Requests und Pushes auf <code>main</code>. Commits auf Feature-Branches werden über den offenen PR gebaut.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="ref">A-04</div>
+    <div class="body">
+      <h2>Offene fachliche Fragen</h2>
+      <p class="lede">Werden beim jeweiligen Feature gemeinsam entschieden und hier mit Datum nachgetragen.</p>
+      <ul class="items">
+        <li><span class="tag t-open">PR 4 / 5</span><span><b>Mindestkardinalität</b>: Die Challenge schreibt „one or more“. Muss ein Order beim Speichern mindestens ein Board haben, ein Board mindestens einen Component? Oder sind leere Zuordnungen zulässig, etwa als Entwurf?</span></li>
+        <li><span class="tag t-open">PR 4 / 5</span><span><b>Löschverhalten</b> bei bestehenden Zuordnungen: Sperre, Kaskade oder Entfernen nur der Verknüpfung.</span></li>
+        <li><span class="tag t-open">PR 3–5</span><span><b>„One or more“ bei Aktionen</b>: Sammeloperationen für Erstellen, Bearbeiten, Suchen und Entfernen. Umfang, API-Form und Verhalten bei Teilfehlern sind offen.</span></li>
+        <li><span class="tag t-open">PR 3</span><span><b>Suche</b>: Welche Felder werden durchsucht (Name, Description), mit welcher Logik (enthält, Groß-/Kleinschreibung)?</span></li>
+        <li><span class="tag t-open">PR 3</span><span><b>Validierung</b>: Pflichtfelder, Längen, Wertebereich von Quantity (zum Beispiel 0 oder ganzzahlig größer 0).</span></li>
+        <li><span class="tag t-open">PR 4</span><span><b>Einheit von Length und Width</b> (in der SMT-Praxis üblich: Millimeter) und Datentyp (ganzzahlig oder Dezimal).</span></li>
+        <li><span class="tag t-open">PR 5</span><span><b>Order Date</b>: reines Datum oder Zeitpunkt; Vorgabe beim Anlegen.</span></li>
+        <li><span class="tag t-open">PR 6</span><span><b>JSON-Struktur des Produktionsdownloads</b> und Dateiname.</span></li>
+      </ul>
+      <div class="note">
+        <h3>Hinweise zum Prompt im Vergleich zur Challenge</h3>
+        <p><b>Quantity</b>: Die Challenge legt Quantity an den Component, ohne die Bedeutung zu definieren. „Anzahl Exemplare pro Board“ ist unsere Interpretation. Wie gefordert bleibt Quantity am Component, auch wenn derselbe Component auf mehreren Boards liegt. Diese Interpretation sollten wir in der Präsentation ausdrücklich nennen.</p>
+        <p><b>„One or more“</b> betrifft alle vier Aktionen, nicht nur das Löschen. Der Prompt berücksichtigt das, legt den Umfang aber zu Recht noch nicht fest.</p>
+        <p>Darüber hinaus widerspricht der Prompt der Challenge nicht und übersieht keine Pflichtanforderung.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="ref">T-01</div>
+    <div class="body">
+      <h2>Technische Entscheidungen</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Bereich</th><th>Entscheidung</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Backend</td><td>C#, ASP.NET Core Minimal API auf .NET 10 (LTS)</td><td><span class="tag t-ok">Festgelegt</span></td></tr>
+            <tr><td>Frontend</td><td>React, TypeScript, Vite; Vite-Proxy leitet <code>/api</code> im Dev-Betrieb an die API weiter</td><td><span class="tag t-ok">Festgelegt</span></td></tr>
+            <tr><td>Persistenz</td><td>SQLite über EF Core, Migrationen beim Start, Connection String über <code>ConnectionStrings__DefaultConnection</code></td><td><span class="tag t-ok">Festgelegt</span></td></tr>
+            <tr><td>Tests</td><td>Separates xUnit-Projekt ab PR 1; Persistenztests auf isolierten SQLite-Datenbanken</td><td><span class="tag t-ok">Festgelegt</span></td></tr>
+            <tr><td>Container</td><td>Ein Image für React und API, non-root, Volume auf <code>/data</code>, Datenbank <code>/data/app.db</code>, Tag = Commit-SHA</td><td><span class="tag t-ok">Festgelegt</span></td></tr>
+            <tr><td>CI</td><td>GitHub Actions: Build, Tests, Lint, Typecheck; auf <code>main</code> zusätzlich <code>docker save</code> als Artefakt</td><td><span class="tag t-ok">Festgelegt</span></td></tr>
+            <tr><td>Betrieb</td><td>Einzelinstanz, keine Authentifizierung, kein Cloud-Deployment</td><td><span class="tag t-ok">Festgelegt</span></td></tr>
+            <tr><td>Struktur</td><td><code>src/OrderManagement.Api</code>, <code>tests/OrderManagement.Api.Tests</code>, <code>frontend/</code>; Endpunkte nach Features gruppiert</td><td><span class="tag t-opt">Vorschlag</span></td></tr>
+            <tr><td>Logging</td><td><code>Microsoft.Extensions.Logging</code> (<code>ILogger&lt;T&gt;</code>) mit Konsolen-Provider; im Container über <code>docker logs</code> einsehbar</td><td><span class="tag t-opt">Vorschlag</span></td></tr>
+            <tr><td>Health</td><td>ASP.NET Core Health Checks unter <code>/api/health</code> mit JSON-Antwort; ab PR 2 inklusive Datenbank-Check</td><td><span class="tag t-opt">Vorschlag</span></td></tr>
+            <tr><td>Node</td><td>Node 24 LTS in CI und Docker-Build; Lockfile <code>package-lock.json</code> eingecheckt</td><td><span class="tag t-opt">Vorschlag</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="ref">T-02</div>
+    <div class="body">
+      <h2>Code-Konventionen</h2>
+      <p class="lede">Vorschläge, die mit PR 1 im Repository verankert werden. Änderungen bitte im Review ansprechen.</p>
+      <div class="group">
+        <h3>Backend</h3>
+        <ul class="items">
+          <li><span class="tag t-opt">Vorschlag</span><span>Gemeinsame Einstellungen in <code>Directory.Build.props</code>: Nullable aktiviert, Warnungen als Fehler, Implicit Usings.</span></li>
+          <li><span class="tag t-opt">Vorschlag</span><span><code>.editorconfig</code> als einzige Stilquelle: 4 Leerzeichen in C#, 2 in TS/JSON/YAML, file-scoped Namespaces, LF.</span></li>
+          <li><span class="tag t-opt">Vorschlag</span><span>Ein Feature pro Ordner (<code>Features/Components</code> mit Endpunkten, DTOs und Service). Endpunkte per Extension-Methode <code>MapComponentEndpoints()</code> registrieren.</span></li>
+          <li><span class="tag t-opt">Vorschlag</span><span>Entitäten nie direkt über die API ausgeben, sondern über Request- und Response-DTOs als <code>record</code>.</span></li>
+          <li><span class="tag t-opt">Vorschlag</span><span>Strukturiertes Logging mit Platzhaltern (<code>"Created component {ComponentId}"</code>), keine String-Interpolation.</span></li>
+          <li><span class="tag t-opt">Vorschlag</span><span><code>dotnet format --verify-no-changes</code> muss lokal sauber durchlaufen; Aufnahme in CI bei Bedarf.</span></li>
+          <li><span class="tag t-opt">Vorschlag</span><span>Testnamen im Stil <code>Methode_Situation_Erwartung</code>; Arrange/Act/Assert.</span></li>
+        </ul>
+      </div>
+      <div class="group">
+        <h3>Frontend</h3>
+        <ul class="items">
+          <li><span class="tag t-opt">Vorschlag</span><span>Linting mit oxlint aus dem aktuellen Vite-Template (ersetzt dort ESLint); <code>npm run lint</code>, <code>npm run typecheck</code> und <code>npm run build</code> müssen in CI grün sein.</span></li>
+          <li><span class="tag t-opt">Vorschlag</span><span>API-Zugriffe gebündelt in <code>src/api/</code>; Komponenten rufen <code>fetch</code> nicht direkt auf.</span></li>
+          <li><span class="tag t-opt">Vorschlag</span><span>Zunächst keine UI-Bibliothek und kein globaler State-Manager; erst bei konkretem Bedarf einführen.</span></li>
+        </ul>
+      </div>
+      <div class="group">
+        <h3>Git</h3>
+        <ul class="items">
+          <li><span class="tag t-ok">Festgelegt</span><span>Kein direkter Commit auf <code>main</code>; ein Branch pro PR; PRs werden nur von dir gemergt.</span></li>
+          <li><span class="tag t-opt">Vorschlag</span><span>Code, Kommentare, Commits und README auf Englisch; Projekt-Handbuch und Abstimmung auf Deutsch.</span></li>
+          <li><span class="tag t-opt">Vorschlag</span><span>Branch-Namen <code>feat/…</code>, <code>chore/…</code>, <code>docs/…</code>; Commit-Nachrichten im Imperativ, englisch, im Conventional-Commits-Stil.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="ref">P-01</div>
+    <div class="body">
+      <h2>PR-Plan</h2>
+      <ol class="prs">
+        <li class="active"><div class="pr-head"><span class="pr-num">PR 1</span><h3>Grundgerüst und erste CI</h3><span class="tag t-open">In Arbeit</span></div><p class="pr-text">Minimal API mit Health-Endpoint, xUnit-Projekt mit Integrationstest, React-Seite zeigt den API-Status, .gitignore, .dockerignore, README, CI für Backend und Frontend.</p></li>
+        <li><div class="pr-head"><span class="pr-num">PR 2</span><h3>Docker, SQLite und Artefakt</h3></div><p class="pr-text">Mehrstufiges Dockerfile, non-root, Compose mit Volume, EF Core mit erster Migration, minimaler Component-Persistenzablauf, Image-Artefakt auf main.</p></li>
+        <li><div class="pr-head"><span class="pr-num">PR 3</span><h3>Components</h3></div><p class="pr-text">CRUD und Suche in API und UI, Quantity am Component, Validierungsregeln gemeinsam festlegen.</p></li>
+        <li><div class="pr-head"><span class="pr-num">PR 4</span><h3>Boards</h3></div><p class="pr-text">CRUD, Suche, Component-Zuordnungen, Löschverhalten entscheiden.</p></li>
+        <li><div class="pr-head"><span class="pr-num">PR 5</span><h3>Orders</h3></div><p class="pr-text">CRUD, Suche, Board-Zuordnungen, Sammeloperationen vervollständigen.</p></li>
+        <li><div class="pr-head"><span class="pr-num">PR 6</span><h3>Produktionsdownload</h3></div><p class="pr-text">JSON-Download eines Orders mit Boards und Components, Download-Button in der UI, Logging und Tests.</p></li>
+        <li><div class="pr-head"><span class="pr-num">PR 7</span><h3>Abschluss</h3></div><p class="pr-text">Erneuter Abgleich, End-to-End-Prüfung, Start aus frischem Checkout und CI-Artefakt, Klassen- und Architekturübersicht.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <div class="ref">D-01</div>
+    <div class="body">
+      <h2>Entscheidungslog</h2>
+      <p class="lede">Fachliche Entscheidungen werden hier datiert festgehalten, sobald sie beim jeweiligen Feature getroffen sind.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Datum</th><th>Entscheidung</th><th>PR</th></tr></thead>
+          <tbody>
+            <tr><td>24.10.2026</td><td>Quantity bleibt am Component und bedeutet: Anzahl Exemplare dieses Components pro Board. Keine Quantity auf der Board-Component-Zuordnung, keine Lagerlogik, keine Berechnung aus Board-Maßen.</td><td>–</td></tr>
+            <tr><td>24.10.2026</td><td>Produktionsdownload als JSON-Datei mit Order, Boards und Components inklusive Quantity; reine Simulation ohne Maschinenanbindung.</td><td>–</td></tr>
+            <tr><td>24.10.2026</td><td>Cloud-Deployment und Login werden nicht umgesetzt.</td><td>–</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer>Quelle: ASMPT_Coding_Challenge_EN.pdf im Repository. Repo-Kopie dieses Dokuments: docs/project-handbook.html</footer>
+</div>
