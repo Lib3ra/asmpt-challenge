@@ -5,7 +5,7 @@ namespace OrderManagement.Api.Features.Components;
 
 public sealed class ComponentRepository(AppDbContext db, ILogger<ComponentRepository> logger) : IComponentRepository
 {
-    public async Task<IReadOnlyList<Component>> SearchAsync(string? name, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<Component>> SearchComponentsAsync(string? name, CancellationToken cancellationToken)
     {
         IQueryable<Component> query = db.Components.AsNoTracking();
         if (!string.IsNullOrWhiteSpace(name))
@@ -18,7 +18,7 @@ public sealed class ComponentRepository(AppDbContext db, ILogger<ComponentReposi
         return await query.OrderBy(c => c.Name).ToListAsync(cancellationToken);
     }
 
-    public Task<Component?> GetByIdAsync(int id, CancellationToken cancellationToken) =>
+    public Task<Component?> GetComponentByIdAsync(int id, CancellationToken cancellationToken) =>
         db.Components.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
     public async Task<IReadOnlySet<string>> FindExistingNamesAsync(
@@ -32,7 +32,7 @@ public sealed class ComponentRepository(AppDbContext db, ILogger<ComponentReposi
         return existing.ToHashSet(StringComparer.OrdinalIgnoreCase);
     }
 
-    public async Task AddRangeAsync(IReadOnlyList<Component> components, CancellationToken cancellationToken)
+    public async Task CreateComponentsAsync(IReadOnlyList<Component> components, CancellationToken cancellationToken)
     {
         db.Components.AddRange(components);
         await db.SaveChangesAsync(cancellationToken);
@@ -40,14 +40,14 @@ public sealed class ComponentRepository(AppDbContext db, ILogger<ComponentReposi
             components.Count, components.Select(c => c.Id));
     }
 
-    public async Task UpdateAsync(Component component, CancellationToken cancellationToken)
+    public async Task UpdateComponentAsync(Component component, CancellationToken cancellationToken)
     {
         db.Components.Update(component);
         await db.SaveChangesAsync(cancellationToken);
         logger.LogInformation("Updated component {ComponentId} ({ComponentName})", component.Id, component.Name);
     }
 
-    public async Task<IReadOnlyList<int>> DeleteRangeAsync(IReadOnlyCollection<int> ids, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<int>> DeleteComponentsAsync(IReadOnlyCollection<int> ids, CancellationToken cancellationToken)
     {
         List<Component> components = await db.Components
             .Where(c => ids.Contains(c.Id))

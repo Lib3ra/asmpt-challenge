@@ -69,8 +69,21 @@ public sealed class ComponentValidatorTests
         Assert.That(errors["description"], Is.EqualTo(new[] { "Description must be at most 2000 characters." }));
     }
 
+    [Test]
+    public void Validate_WithDescriptionAtLimitSurroundedBySpaces_ReturnsNoErrors()
+    {
+        // Arrange
+        ComponentRequest request = new("LED", $"  {new string('x', Component.DescriptionMaxLength)}  ", 1);
+
+        // Act
+        Dictionary<string, string[]> errors = ComponentValidator.Validate(request).ToDictionary();
+
+        // Assert
+        Assert.That(errors, Is.Empty);
+    }
+
     [TestCase(1)]
-    [TestCase(10_000)]
+    [TestCase(10000)]
     public void Validate_WithQuantityAtBoundary_ReturnsNoErrors(int quantity)
     {
         // Act

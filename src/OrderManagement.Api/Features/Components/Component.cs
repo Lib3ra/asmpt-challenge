@@ -6,7 +6,7 @@ public sealed class Component
     public const int NameMaxLength = 256;
     public const int DescriptionMaxLength = 2000;
     public const int MinQuantity = 1;
-    public const int MaxQuantity = 10_000;
+    public const int MaxQuantity = 10000;
 
     public int Id { get; set; }
 

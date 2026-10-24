@@ -57,7 +57,7 @@ public sealed class ComponentEndpointTests
     public async Task Create_WithSeveralValidComponents_StoresAllAndReturnsCreated()
     {
         // Arrange
-        ComponentRequest[] requests = [new("  Crystal 8 MHz ", "HC-49 SMD", 1), new("Diode 1N4148", null, 6)];
+        ComponentRequest[] requests = [new("  Crystal 8 MHz ", " HC-49 SMD  ", 1), new("Diode 1N4148", null, 6)];
 
         // Act
         HttpResponseMessage response = await _client.PostAsJsonAsync(Route, requests);

@@ -14,14 +14,14 @@ export const componentLimits = {
   nameMaxLength: 256,
   descriptionMaxLength: 2000,
   minQuantity: 1,
-  maxQuantity: 10_000,
+  maxQuantity: 10000,
 } as const
 
 const route = '/api/components'
 
 export function searchComponents(name: string, signal?: AbortSignal): Promise<Component[]> {
   const query = name.trim() ? `?name=${encodeURIComponent(name.trim())}` : ''
-  return apiRequest<Component[]>(`${route}${query}`, { signal })
+  return apiRequest<Component[]>(`${route}${query}`, { method: 'GET', signal })
 }
 
 /** Creates one or more components; all-or-nothing on the server. */

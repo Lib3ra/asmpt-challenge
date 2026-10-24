@@ -6,11 +6,14 @@ public sealed record ComponentRequest(string? Name, string? Description, int Qua
     /// <summary>The name as it is stored: trimmed.</summary>
     public string NormalizedName => Name?.Trim() ?? string.Empty;
 
+    /// <summary>The description as it is stored: trimmed, empty when missing.</summary>
+    public string NormalizedDescription => Description?.Trim() ?? string.Empty;
+
     public Component ToComponent(int id = 0) => new()
     {
         Id = id,
         Name = NormalizedName,
-        Description = Description ?? string.Empty,
+        Description = NormalizedDescription,
         Quantity = Quantity,
     };
 }

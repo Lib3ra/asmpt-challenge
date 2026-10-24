@@ -20,10 +20,10 @@ public static class EntityRules
         }
     }
 
-    /// <summary>Description is optional and limited to <paramref name="maxLength"/> characters.</summary>
+    /// <summary>Description is optional and limited to <paramref name="maxLength"/> characters after trimming.</summary>
     public static void ValidateDescription(string? description, int maxLength, ValidationErrors errors)
     {
-        if (description is not null && description.Length > maxLength)
+        if ((description?.Trim().Length ?? 0) > maxLength)
         {
             errors.Add(DescriptionField, $"Description must be at most {maxLength} characters.");
         }

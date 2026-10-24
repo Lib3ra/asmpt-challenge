@@ -58,6 +58,9 @@ No additional backend projects or architecture frameworks unless agreed.
   `Component.NameMaxLength`, so database mapping and validation share one value.
 - Rely on EF Core conventions (table names, keys) and configure only what deviates from them.
 - Descriptive names, no abbreviations: `componentRepository`, `cancellationToken` (not `repository`, `ct`).
+- Repository methods describe the domain action and do not mirror EF Core method names:
+  `CreateComponentsAsync`, `UpdateComponentAsync`, `DeleteComponentsAsync` (not `AddRangeAsync`, `UpdateAsync`).
+- Write numeric literals without digit separators (`10000`, not `10_000`).
 - Validation without database access lives in a static `<Entity>Validator` built on `Common/Validation`;
   checks that need the database (unique names, existence) go through the repository. Validation errors are
   returned with `TypedResults.ValidationProblem`, keyed like the JSON request (`name`, `[1].quantity`).
