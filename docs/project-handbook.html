@@ -1,4 +1,4 @@
-<title>SMT Order Manager Handbuch</title>
+<title>Order Manager Handbuch</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -91,7 +91,7 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
 <div class="wrap">
   <header>
     <span class="eyebrow">ASMPT Coding Challenge · Projekt-Handbuch</span>
-    <h1>SMT Order Manager Handbuch</h1>
+    <h1>Order Manager Handbuch</h1>
     <p class="lede">Abgleich mit der Aufgabenstellung, festgelegte technische Entscheidungen, Code-Konventionen und der PR-Plan. Dieses Dokument wird mit jedem PR fortgeschrieben.</p>
     <div class="meta"><span>Repo: Lib3ra/asmpt-challenge</span><span>Stand: 24.10.2026</span><span>Aktueller Schritt: PR 1</span></div>
   </header>
@@ -211,7 +211,7 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
       <div class="group">
         <h3>Frontend</h3>
         <ul class="items">
-          <li><span class="tag t-opt">Vorschlag</span><span>Linting mit oxlint aus dem aktuellen Vite-Template (ersetzt dort ESLint); <code>npm run lint</code>, <code>npm run typecheck</code> und <code>npm run build</code> müssen in CI grün sein.</span></li>
+          <li><span class="tag t-opt">Vorschlag</span><span>Linting mit ESLint (Flat Config in <code>eslint.config.js</code>): JS- und typescript-eslint-Empfehlungen sowie die React-Hooks- und React-Refresh-Regeln. <code>npm run lint</code>, <code>npm run typecheck</code> und <code>npm run build</code> müssen in CI grün sein.</span></li>
           <li><span class="tag t-opt">Vorschlag</span><span>API-Zugriffe gebündelt in <code>src/api/</code>; Komponenten rufen <code>fetch</code> nicht direkt auf.</span></li>
           <li><span class="tag t-opt">Vorschlag</span><span>Zunächst keine UI-Bibliothek und kein globaler State-Manager; erst bei konkretem Bedarf einführen.</span></li>
         </ul>
@@ -256,6 +256,8 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
             <tr><td>24.10.2026</td><td>Produktionsdownload als JSON-Datei mit Order, Boards und Components inklusive Quantity; reine Simulation ohne Maschinenanbindung.</td><td>–</td></tr>
             <tr><td>24.10.2026</td><td>Cloud-Deployment und Login werden nicht umgesetzt.</td><td>–</td></tr>
             <tr><td>24.10.2026</td><td>Testframework NUnit statt xUnit, weil das Team damit vertrauter ist. Version 4.6.1 statt des gerade erschienenen Major-Release 5.0.0.</td><td>#1</td></tr>
+            <tr><td>24.10.2026</td><td>Anwendungsname generisch „Order Manager“ statt „SMT Order Manager“.</td><td>#1</td></tr>
+            <tr><td>24.10.2026</td><td>Frontend-Linting mit ESLint statt oxlint aus dem Vite-Template, weil das Team ESLint kennt.</td><td>#1</td></tr>
           </tbody>
         </table>
       </div>

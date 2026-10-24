@@ -1,4 +1,4 @@
-# SMT Order Manager (ASMPT coding challenge)
+# Order Manager (ASMPT coding challenge)
 
 Web application for managing orders, boards and components in an SMT (Surface-Mount Technology)
 manufacturing environment. The task description is in [`ASMPT_Coding_Challenge_EN.pdf`](ASMPT_Coding_Challenge_EN.pdf);

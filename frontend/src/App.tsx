@@ -22,7 +22,7 @@ function App() {
 
   return (
     <main>
-      <h1>SMT Order Manager</h1>
+      <h1>Order Manager</h1>
       <p className="status" data-state={api.kind}>
         API status:{' '}
         {api.kind === 'loading' && 'checking…'}
