@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { searchBoards, type Board } from '../../api/boards'
+import { errorMessage } from '../../api/http'
 import { deleteOrders, searchOrders, type Order } from '../../api/orders'
 import { useNameSearch } from '../../hooks/useNameSearch'
 import { useSelection } from '../../hooks/useSelection'
@@ -12,13 +13,16 @@ export function OrdersPage() {
   const [boards, setBoards] = useState<Board[]>([])
   const [editing, setEditing] = useState<Order | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+  const [boardsError, setBoardsError] = useState<string | null>(null)
 
   useEffect(() => {
     const controller = new AbortController()
     searchBoards('', controller.signal)
       .then(setBoards)
-      .catch(() => {
-        // The form shows an empty board list; the order list reports API problems.
+      .catch((error: unknown) => {
+        if (!controller.signal.aborted) {
+          setBoardsError(errorMessage(error))
+        }
       })
     return () => controller.abort()
   }, [])
@@ -48,6 +52,7 @@ export function OrdersPage() {
         key={editing?.id ?? 'new'}
         order={editing}
         boards={boards}
+        boardsError={boardsError}
         onSaved={handleSaved}
         onCancel={() => setEditing(null)}
       />

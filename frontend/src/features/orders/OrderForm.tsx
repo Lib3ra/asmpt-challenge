@@ -9,6 +9,8 @@ type OrderFormProps = {
   /** The order being edited, or null to create a new one. */
   order: Order | null
   boards: Board[]
+  /** Why the board list could not be loaded, shown instead of a misleading empty list. */
+  boardsError: string | null
   onSaved: (order: Order) => void
   onCancel: () => void
 }
@@ -39,7 +41,7 @@ function toInput(draft: OrderDraft): OrderInput {
 }
 
 /** Creates or edits one order. The parent remounts it (key) when switching between orders. */
-export function OrderForm({ order, boards, onSaved, onCancel }: OrderFormProps) {
+export function OrderForm({ order, boards, boardsError, onSaved, onCancel }: OrderFormProps) {
   const [draft, setDraft] = useState<OrderDraft>(() => draftFrom(order))
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [formError, setFormError] = useState<string | null>(null)
@@ -110,6 +112,7 @@ export function OrderForm({ order, boards, onSaved, onCancel }: OrderFormProps) 
         onChange={(boardIds) => setDraft({ ...draft, boardIds })}
       />
       <FieldError messages={fieldErrors.boardIds} />
+      {boardsError && <p className="form-error">Could not load boards: {boardsError}</p>}
       {formError && <p className="form-error">{formError}</p>}
       <div className="actions">
         {order && (
