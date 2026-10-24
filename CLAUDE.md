@@ -20,6 +20,7 @@ how we write and ship code. Change it through a pull request like any other code
 
 ```
 src/OrderManagement.Api/          Minimal API; one folder per feature under Features/
+  Data/                           DbContext, startup migration, EF Core migrations (generated)
 tests/OrderManagement.Api.Tests/  NUnit tests, mirroring the Features/ structure
 frontend/                         React + TypeScript + Vite
 docs/                             Project handbook
@@ -37,6 +38,10 @@ No additional backend projects or architecture frameworks unless agreed.
 - Register endpoints with an extension method per feature, e.g. `app.MapComponentEndpoints()`.
   Keep `Program.cs` limited to wiring.
 - Never expose EF Core entities from the API. Use request and response DTOs declared as `record`.
+- Entity mapping lives in an `IEntityTypeConfiguration<T>` next to the entity; `AppDbContext` picks
+  configurations up from the assembly.
+- Schema changes always come with an EF Core migration (`dotnet ef migrations add`, local tool). Never edit
+  an applied migration; generated files under `Data/Migrations` are excluded from style rules.
 - Logging through `ILogger<T>` with message templates, not string interpolation:
   `logger.LogInformation("Created component {ComponentId}", id)`.
 - Apply SOLID and DRY pragmatically; introduce an abstraction only when it has a second use or makes
@@ -83,4 +88,5 @@ dotnet format AsmptChallenge.slnx --verify-no-changes
 npm --prefix frontend run lint
 npm --prefix frontend run typecheck
 npm --prefix frontend run build
+docker compose up --build -d
 ```

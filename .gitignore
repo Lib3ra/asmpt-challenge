@@ -79,6 +79,7 @@ appsettings.*.local.json
 *.sqlite
 *.sqlite3
 /data/
+App_Data/
 
 # Frontend
 node_modules/

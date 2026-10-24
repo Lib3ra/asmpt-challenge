@@ -17,6 +17,7 @@ frontend/dist
 **/*.db-wal
 **/*.db-journal
 data/
+**/App_Data
 **/.env
 **/.env.*
 **/*.local
