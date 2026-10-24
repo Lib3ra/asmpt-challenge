@@ -93,7 +93,7 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
     <span class="eyebrow">ASMPT Coding Challenge · Project handbook</span>
     <h1>Order Manager Handbook</h1>
     <p class="lede">Alignment with the task description, agreed technical decisions, code conventions and the PR plan. This document is updated with every PR.</p>
-    <div class="meta"><span>Repo: Lib3ra/asmpt-challenge</span><span>As of: 2026-10-24</span><span>Current step: PR 8 (Global search)</span></div>
+    <div class="meta"><span>Repo: Lib3ra/asmpt-challenge</span><span>As of: 2026-10-24</span><span>Current step: PR 9 (Production download)</span></div>
   </header>
 
   <section>
@@ -253,8 +253,8 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
         <li><div class="pr-head"><span class="pr-num">PR 4</span><h3>Components</h3><span class="tag t-ok">Merged</span></div><p class="pr-text">CRUD in API and UI, validation, unique names, name filter, bulk create and bulk delete (all-or-nothing).</p></li>
         <li><div class="pr-head"><span class="pr-num">PR 5</span><h3>Boards</h3><span class="tag t-ok">Merged</span></div><p class="pr-text">CRUD with at least one component per board, dimensions in mm, name filter, bulk delete, 409 when deleting components in use. Boards are created one at a time.</p></li>
         <li><div class="pr-head"><span class="pr-num">PR 6</span><h3>Orders</h3><span class="tag t-ok">Merged</span></div><p class="pr-text">CRUD with at least one board per order, order date, name filter, bulk delete, 409 when deleting boards in use. Orders are created one at a time.</p></li>
-        <li class="active"><div class="pr-head"><span class="pr-num">PR 8</span><h3>Global search</h3><span class="tag t-open">In review</span></div><p class="pr-text">Search page and <code>GET /api/search</code> across orders, boards and components, results grouped by type, optional type filter. Results open the list page filtered by that name.</p></li>
-        <li><div class="pr-head"><span class="pr-num">PR 9</span><h3>Production download</h3></div><p class="pr-text">Nested JSON download of an order with its boards and components, download button in the UI, logging and tests.</p></li>
+        <li><div class="pr-head"><span class="pr-num">PR 8</span><h3>Global search</h3><span class="tag t-ok">Merged</span></div><p class="pr-text">Search page and <code>GET /api/search</code> across orders, boards and components, results grouped by type, optional type filter. Results open the list page filtered by that name.</p></li>
+        <li class="active"><div class="pr-head"><span class="pr-num">PR 9</span><h3>Production download</h3><span class="tag t-open">In review</span></div><p class="pr-text"><code>GET /api/orders/{id}/production-download</code> returns the order with its boards and components (Quantity per board) and <code>exportedAt</code> as <code>order-&lt;id&gt;-&lt;name&gt;.json</code>; logged; “Download for production” link per order.</p></li>
         <li><div class="pr-head"><span class="pr-num">PR 10</span><h3>Wrap-up</h3></div><p class="pr-text">Final alignment check, end-to-end verification, start from a fresh checkout and from the CI artifact, class and architecture outline.</p></li>
       </ol>
     </div>
@@ -291,6 +291,7 @@ footer { color: var(--muted); font-size: var(--s-1); font-family: var(--f-mono);
             <tr><td>2026-10-24</td><td>No localization: messages and number formats are English and culture-invariant, independent of server and user locale. Formatting in the user's locale would be a separate feature and is out of scope for now.</td><td>#4</td></tr>
             <tr><td>2026-10-24</td><td>No <code>formatVersion</code> in the production download: nothing consumes the file and there is no second format, so a version field has no current purpose. Can be added if a real consumer appears.</td><td>#3</td></tr>
             <tr><td>2026-10-24</td><td>Global search: a blank term is rejected (400) and the page shows a hint instead of every record; the type filter is one type or all; a result opens its list page filtered by name (filters live in the URL). Matching and ordering reuse the list searches.</td><td>#8</td></tr>
+            <tr><td>2026-10-24</td><td>Production download at <code>GET /api/orders/{id}/production-download</code>. File name part: ASCII letters and digits only, other characters collapsed to hyphens, at most 50 characters; <code>order-&lt;id&gt;.json</code> if nothing is left. Boards and components are sorted by name. The UI uses a plain download link, so the file is saved by the browser without a client-side copy.</td><td>#9</td></tr>
             <tr><td>2026-10-24</td><td>GitHub gave the global search PR number #8 (#7 was skipped), so the plan shifts by one to keep matching GitHub: global search #8, production download #9, wrap-up #10.</td><td>#8</td></tr>
             <tr><td>2026-10-24</td><td>PR plan extended and renumbered to match GitHub: this docs PR is #3, followed by Components #4, Boards #5, Orders #6, global search #7 (new, own PR), production download #8, wrap-up #9.</td><td>#3</td></tr>
           </tbody>
